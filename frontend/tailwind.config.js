@@ -15,14 +15,16 @@ module.exports = {
         'amarillo-detalle':'#FFAE00',
         'celeste-claro':'#ADE5FF',
         'rosa-claro':'#FFD5E2',
-        'verde-lima':'#F1FFD9',
+        'verde-lima-claro':'#F1FFD9',
         'beige-claro':'#F6F4E9',
         'amarillo-claro':'#FFE8B7',
         'white': '#FFFFFF',
         'black': '#000000',
       },
       fontFamily: {
-        
+        sans:['var(--font-mplus)'], //subtítulos y texto
+        title:['var(--font-surfer)'],//títulos
+        button:['var(--font-gluten)'],//botones
       } 
     },
   },
