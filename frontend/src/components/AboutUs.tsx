@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Image from 'next/image';
 const AboutUs = () => {
   return (
     <section className="container mx-auto px-6 py-16 bg-white">
@@ -15,8 +15,14 @@ const AboutUs = () => {
           </a>
         </div>
         <div>
-          {/* Reemplaza con la imagen correspondiente */}
-          <img src="/images/quienes-somos.jpg" alt="Voluntarios ayudando" className="rounded-lg shadow-lg" />
+          <Image
+            src="/IMG/Equipo.jpg" 
+            alt="Equipo"
+            layout="fill"
+            objectFit="cover" 
+            quality={90} 
+            className="-z-10" 
+          /> 
         </div>
       </div>
     </section>

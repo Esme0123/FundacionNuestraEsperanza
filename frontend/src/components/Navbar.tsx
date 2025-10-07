@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Image from 'next/image';
 const Navbar = () => {
   const navLinks = ["Inicio", "Quiénes Somos", "Programas", "Testimonios", "Noticias", "Contacto"];
   return (

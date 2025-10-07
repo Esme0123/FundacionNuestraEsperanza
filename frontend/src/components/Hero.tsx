@@ -1,12 +1,20 @@
 import React from 'react';
+import Image from 'next/image';
 
 const Hero = () => {
   return (
     <section 
-      className="relative text-center text-white bg-cover bg-center py-40" 
-      style={{ backgroundImage: "url('/images/hero-background.jpg')" }}
-    >
-      <div className="absolute inset-0 bg-black opacity-40"></div>
+      className="relative text-center text-white flex items-center justify-center h-[70vh]">
+      <Image
+        src="/IMG/Home.jpg" 
+        alt="Fondo de la fundación"
+        layout="fill"
+        objectFit="cover" 
+        quality={90} 
+        priority 
+        className="-z-10" 
+      />  
+      <div className="absolute inset-0 bg-celeste-claro opacity-40 -z-10"></div>
       <div className="relative z-10 container mx-auto">
         <h1 className="text-5xl md:text-6xl font-extrabold leading-tight font-title">
           Toda vida merece esperanza
