@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Image from 'next/image';
 const Testimonials = () => {
   const testimonials = [
     {
@@ -19,7 +19,10 @@ const Testimonials = () => {
   return (
     <section className="bg-rosa-claro py-16">
       <div className="container mx-auto px-6">
-        <h2 className="text-4xl font-bold text-black mb-12 text-center font-title">TESTIMONIOS</h2>
+        <h2 className="text-4xl font-bold text-black mb-5  text-center font-title">TESTIMONIOS</h2>
+        <div className="flex justify-center">
+          <div className="bg-rosa-principal w-20 h-2 mb-5"></div>
+        </div>
         <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
             <div key={index} className="bg-white p-8 rounded-lg shadow-lg text-center">

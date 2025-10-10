@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import Stats from "@/components/Stats";
 import AboutUs from "@/components/AboutUs";
 import Programs from "@/components/Programs";
 import HowToHelp from "@/components/HowToHelp";
@@ -13,6 +14,7 @@ export default function HomePage() {
     <main>
       <Navbar />
       <Hero />
+      <Stats/>
       <AboutUs />
       <Programs/>
       <HowToHelp/>

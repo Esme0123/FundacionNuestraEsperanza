@@ -22,7 +22,7 @@ const Programs = () => {
 
   return (
     <section className=" mx-auto px-6 py-16 bg-celeste-claro">
-      <h2 className="text-5xl font-bold text-black mb-8 text-center font-title ">PROGRAMAS</h2>
+      <h2 className="text-4xl font-bold text-black mb-8 text-center font-title ">PROGRAMAS</h2>
       <div className="flex justify-center">
         <div className="bg-rosa-principal w-20 h-2 mb-5"></div>
       </div>
@@ -40,7 +40,7 @@ const Programs = () => {
             </div>
             <h4 className="text-2xl font-bold text-black mb-4 font-title">{program.title}</h4>
             <p className="text-black font-sans mb-6">{program.description}</p>
-            <a href="#" className="bg-turquesa-secundario text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-90 transition duration-300 font-button">
+            <a href="#" className="bg-turquesa-secundario px-7 py-4 rounded-full font-bold hover:bg-blue-200 text-azul-marino transition duration-300 font-button">
               CONOCER MÁS
             </a>
           </div>

@@ -15,7 +15,10 @@ const HowToHelp = () => {
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <h2 className="text-4xl font-bold text-white mb-12 text-center font-title">CÓMO AYUDAR</h2>
+        <h2 className="text-4xl font-bold text-white mb-4 text-center font-title">CÓMO AYUDAR</h2>
+        <div className="flex justify-center">
+          <div className="bg-rosa-principal w-20 h-2 mb-5"></div>
+        </div>
         <div className="grid md:grid-cols-2 gap-32 max-w-6xl mx-auto">
           <div className=" p-8 rounded-lg shadow-xl text-center ">
             <h3 className="text-3xl font-bold text-white mb-4 font-title p-3">VOLUNTARIADO</h3>

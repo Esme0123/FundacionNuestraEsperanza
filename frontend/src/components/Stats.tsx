@@ -18,7 +18,7 @@ const Stats = () => {
           objectFit="cover"
           quality={90}
         />
-        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="absolute inset-0 bg-black opacity-0"></div>
       </div>
 
       <div className="container mx-auto px-6 relative z-10 text-white text-center">
