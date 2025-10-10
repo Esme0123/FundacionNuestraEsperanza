@@ -16,7 +16,7 @@ const Subscribe = () => {
           />
           <button 
             type="submit" 
-            className="bg-rosa-principal text-white px-8 py-3 rounded-r-full font-bold hover:bg-opacity-90 transition duration-300 font-button"
+            className="bg-rosa-principal hover:bg-amarillo-detalle text-white px-8 py-3 rounded-r-full font-bold hover:bg-opacity-90 transition duration-300 font-button"
           >
             SUBSCRIBETE
           </button>
