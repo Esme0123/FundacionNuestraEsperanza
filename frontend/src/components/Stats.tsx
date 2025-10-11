@@ -24,7 +24,7 @@ const Stats = () => {
       <div className="container mx-auto px-6 relative z-10 text-white text-center">
         <div className="grid md:grid-cols-3 gap-8">
           {stats.map((stat, index) => (
-            <div key={index}>
+            <div key={index} data-aos="fade-up" data-aos-delay={100 * index}>
               <p className="text-5xl font-bold font-title">{stat.number}</p>
               <p className="mt-2 text-lg font-sans">{stat.text}</p>
             </div>

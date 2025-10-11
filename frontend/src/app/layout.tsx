@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import {M_PLUS_Rounded_1c, Original_Surfer,Gluten} from "next/font/google";
+import AOSInitializer from "@/components/AOSInitializer";
 
 const mPlus=M_PLUS_Rounded_1c({
   subsets:['latin'],
@@ -33,6 +34,7 @@ export default function RootLayout({
       `${mPlus.variable} ${surfer.variable} ${gluten.variable}`
     }>
       <body>
+        <AOSInitializer />
         {children}
       </body>
     </html>

@@ -1,11 +1,16 @@
 "use client";
 import React from 'react';
-import dynamic from 'next/dynamic';
-const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
+import YouTube from 'react-youtube';
 
 const News = () => {
-  const youtubeVideoUrl = 'https://www.youtube.com/watch?v=IpCPTWZszJc';
-
+  const videoId = "IpCPTWZszJc";
+  const opts = {
+    height: '100%',
+    width: '100%',
+    playerVars: {
+      autoplay: 0, 
+    },
+  };
   return (
     <section id="noticias" className="bg-white py-16">
       <div className="container mx-auto px-6">
@@ -26,13 +31,7 @@ const News = () => {
             </a>
           </div>
           <div className="relative aspect-video w-full rounded-lg overflow-hidden shadow-lg bg-black">
-            <ReactPlayer
-              url={youtubeVideoUrl}
-              width="100%"
-              height="100%"
-              controls={true}
-              className="absolute top-0 left-0"
-            />
+            <YouTube videoId={videoId} opts={opts} className="absolute inset-0 w-full h-full" />
           </div>
         </div>
       </div>

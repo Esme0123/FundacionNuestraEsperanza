@@ -24,7 +24,7 @@ const AboutPage = () => {
     <main>
       <Navbar />
       <section className="relative h-80 flex items-center justify-center text-white">
-        <Image src="/IMG/Equipo.jpg" alt="Fondo Quiénes Somos" layout="fill" objectFit="cover" className="-z-10" />
+        <Image src="/IMG/Equipo.jpg" alt="Fondo Quiénes Somos" layout="fill" objectFit="cover" priority className="-z-10 object-cover object-center"/>
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <h1 className="text-6xl font-bold z-10 font-title">Quiénes Somos</h1>
       </section>
@@ -69,7 +69,10 @@ const AboutPage = () => {
 
       {/* Nuestro Equipo Section */}
       <section className="container mx-auto px-6 py-20">
-        <h2 className="text-4xl font-bold text-black mb-12 text-center font-title">Nuestro Equipo</h2>
+        <h2 className="text-4xl font-bold text-black mb-2 text-center font-title">Nuestro Equipo</h2>
+        <div className="flex justify-center">
+              <div className="bg-rosa-principal w-20 h-2 mb-8"></div>
+            </div>
         <div className="grid md:grid-cols-3 gap-8 items-start">
           <div className="md:col-span-2">
             <div className="relative w-full h-0 pb-[66.66%] rounded-lg overflow-hidden shadow-xl mb-4">

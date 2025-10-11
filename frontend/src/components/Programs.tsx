@@ -33,7 +33,7 @@ const Programs = () => {
         <h3 className="text-2xl font-sans text-gray-700 text-center mb-12">Qué hacemos</h3>
         <div className="grid md:grid-cols-3 gap-8">
           {programs.map((program, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+            <div key={index} data-aos="fade-up" data-aos-delay={100 * (index + 1)} className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
               <div className={`w-full h-3 ${program.color}`}></div>
               <div className={`relative w-full h-0 pb-[66.66%] overflow-hidden`}>
                 <Image

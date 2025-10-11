@@ -4,7 +4,7 @@ const AboutUs = () => {
   return (
     <section className="mx-auto px-2 py-16 ">
       <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center p-10">
-        <div>
+        <div data-aos="fade-right">
           <h2 className="text-5xl font-bold text-black mb-4 font-title">QUIÉNES SOMOS</h2>
           <div className="bg-rosa-principal w-20 h-2 mb-5"></div>
           <h4 className='text-2xl font-sans text-black'>Misión, Visión y Propósito</h4>
@@ -16,7 +16,7 @@ const AboutUs = () => {
             CONOCER MÁS
           </a>
         </div>
-        <div className="relative w-full h-96 rounded-lg shadow-lg overflow-hidden">
+        <div data-aos="fade-left" className="relative w-full h-96 rounded-lg shadow-lg overflow-hidden">
           <Image 
             src="/IMG/Equipo1.jpg" 
             alt="Voluntarios de la fundación ayudando" 

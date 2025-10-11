@@ -26,13 +26,13 @@ const Testimonials = () => {
   return (
     <section id="testimonios" className="bg-rosa-claro py-16"> 
       <div className="container mx-auto px-6">
-        <h2 className="text-4xl font-bold text-black mb-2 text-center font-title">TESTIMONIOS</h2>
+        <h2 data-aos="fade-up" className="text-4xl font-bold text-black mb-2 text-center font-title">TESTIMONIOS</h2>
         <div className="flex justify-center">
               <div className="bg-rosa-principal w-20 h-2 mb-5"></div>
             </div>
         <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
-            <div key={index} className="bg-white shadow-lg overflow-hidden">
+            <div key={index} data-aos="zoom-in" data-aos-delay={100 * index} className="bg-white shadow-lg overflow-hidden">
               <div className="relative w-full h-0 pb-[100%] overflow-hidden"> 
                 <Image
                   src={testimonial.image}
