@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 const HowToHelp = () => {
   return (
-    <section className="relative py-20 bg-white">
+    <section id="como-ayudar" className="relative py-20 bg-white">
       <div className="absolute inset-0 z-0">
         <Image
           src="/IMG/ayudar.png"

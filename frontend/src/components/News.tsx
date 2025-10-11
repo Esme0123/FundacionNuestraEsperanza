@@ -1,12 +1,13 @@
+"use client";
 import React from 'react';
-import LiteYouTubeEmbed from 'react-lite-youtube-embed';
-import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
+import dynamic from 'next/dynamic';
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 
 const News = () => {
-  const youtubeVideoId = 'IpCPTWZszJc'; 
+  const youtubeVideoUrl = 'https://www.youtube.com/watch?v=IpCPTWZszJc';
 
   return (
-    <section className="bg-white py-16">
+    <section id="noticias" className="bg-white py-16">
       <div className="container mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
@@ -24,11 +25,13 @@ const News = () => {
               CONOCER MÁS
             </a>
           </div>
-          <div className="rounded-lg overflow-hidden shadow-lg">
-            <LiteYouTubeEmbed
-              id={youtubeVideoId}
-              title="Video de Noticias"
-              noCookie={true}
+          <div className="relative aspect-video w-full rounded-lg overflow-hidden shadow-lg bg-black">
+            <ReactPlayer
+              url={youtubeVideoUrl}
+              width="100%"
+              height="100%"
+              controls={true}
+              className="absolute top-0 left-0"
             />
           </div>
         </div>

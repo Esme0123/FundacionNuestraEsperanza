@@ -6,7 +6,7 @@ const Alliances = () => {
     { src: 'ic_latina.png', url: 'https://redalianzalatina.org/es/home-esp/' },
     { src: 'ic_childhood.png', url: 'https://ccieurope.eu/' }, 
     { src: 'ic_canica.jpeg', url: 'https://canica.org.mx/' },
-    { src: 'ic_jude.png', url: 'https://www.stjude.org/es/' },
+    { src: 'ic_jude.jpg', url: 'https://www.stjude.org/es/' },
   ];
 
   return (

@@ -1,23 +1,33 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 const Navbar = () => {
-  const navLinks = ["Inicio", "Quiénes Somos", "Programas","Cómo Ayudar", "Testimonios", "Noticias", "Contacto"];
+  const navLinks = [
+    { name: "Inicio", path: "/" },
+    { name: "Quiénes Somos", path: "/quienes-somos" },
+    { name: "Programas", path: "/#programas" }, 
+    { name: "Cómo Ayudar", path: "/#como-ayudar" },
+    { name: "Testimonios", path: "/#testimonios" },
+    { name: "Noticias", path: "/#noticias" },
+    { name: "Contacto", path: "/#contacto" },
+  ];
   return (
     <header className="bg-azul-marino shadow-md sticky top-0 z-50 font-sans text-base">
       <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center">
+        <Link href="/">
           <Image
                   src="/IMG/Logo.jpg" 
                   alt="Fundación Nuestra Esperanza"
                   width={200}
                   height={60}
+                  className="cursor-pointer"
           />  
-        </div>
-        <div className="hidden lg:flex items-center space-x-8">
+        </Link>
+        <div className="hidden lg:flex items-center space-x-7">
           {navLinks.map((link) => (
-            <a key={link} href="#" className="text-white hover:text-rosa-principal transition duration-300">
-              {link}
-            </a>
+            <Link key={link.name} href={link.path} className="text-white hover:text-rosa-principal transition duration-300">
+                {link.name}
+            </Link>
           ))}
         </div>
         <div className="flex items-center space-x-4">

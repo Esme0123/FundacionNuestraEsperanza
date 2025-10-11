@@ -24,7 +24,7 @@ const Programs = () => {
   ];
 
   return (
-    <section className="bg-celeste-claro py-16"> 
+    <section id="programas" className="bg-celeste-claro py-16"> 
       <div className="container mx-auto px-6">
         <h2 className="text-4xl font-bold text-black mb-2 text-center font-title">PROGRAMAS</h2>
         <div className="flex justify-center">
@@ -34,7 +34,8 @@ const Programs = () => {
         <div className="grid md:grid-cols-3 gap-8">
           {programs.map((program, index) => (
             <div key={index} className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
-              <div className="relative w-full h-0 pb-[66.66%] overflow-hidden"> 
+              <div className={`w-full h-3 ${program.color}`}></div>
+              <div className={`relative w-full h-0 pb-[66.66%] overflow-hidden`}>
                 <Image
                   src={program.image}
                   alt={`Imagen de ${program.title}`}
