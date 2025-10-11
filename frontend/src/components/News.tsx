@@ -1,43 +1,36 @@
 import React from 'react';
+import LiteYouTubeEmbed from 'react-lite-youtube-embed';
+import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 
 const News = () => {
-  const newsItems = [
-    {
-      category: 'CBS This Morning',
-      progress: '17% de recaudación',
-      raised: 'Total recaudado Bs 4563',
-      date: 'Fecha del evento'
-    },
-    {
-      category: 'Principal colaborador',
-      progress: '17% de recaudación',
-      raised: 'Total recaudado Bs 4563',
-      date: 'Fecha del evento'
-    },
-    {
-      category: 'CBS This Morning',
-      progress: '17% de recaudación',
-      raised: 'Total recaudado Bs 4563',
-      date: 'Fecha del evento'
-    }
-  ];
+  const youtubeVideoId = 'IpCPTWZszJc'; 
 
   return (
     <section className="bg-white py-16">
       <div className="container mx-auto px-6">
-        <h2 className="text-4xl font-bold text-black mb-12 text-center font-title">NOTICIAS</h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          {newsItems.map((item, index) => (
-            <div key={index} className="rounded-lg shadow-lg overflow-hidden">
-              <img src={`https://picsum.photos/seed/${index+10}/600/400`} alt="Imagen de noticia" className="w-full h-48 object-cover" />
-              <div className="p-6">
-                <h3 className="font-bold text-lg mb-2 text-azul-marino font-title">{item.category}</h3>
-                <p className="text-sm text-gray-600 font-sans">{item.progress}</p>
-                <p className="text-sm text-gray-600 font-sans">{item.raised}</p>
-                <p className="text-sm text-gray-600 font-sans mt-2">{item.date}</p>
-              </div>
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 className="text-4xl font-bold text-black mb-2 font-title">NOTICIAS</h2>
+            <div className="flex justify-left">
+              <div className="bg-rosa-principal w-20 h-2 mb-5"></div>
             </div>
-          ))}
+            <h4 className="text-2xl font-sans text-gray-700 mb-6">Recientes / Galería</h4>
+            <p className="text-black font-sans mb-4">
+              Son más de 8 años de haber vivido alegrias, por nuestros sobrevivientes y tristeza por la partida de nuestros pequeños, en ambos casos dejan huellas imborrables en cada uno de los corazones y mente de los voluntarios y todas las personas que tuvieron y tienen contacto con nuestros niños.</p>
+            <p className="text-black font-sans mb-8">
+              La Casita un Hogar lejos de casa está abierta, gracias a todas las personas que nos apoyan con un granito de arena a solventar los gastos del Albergue y del Comedor.
+            </p>
+            <a href="#" className="bg-rosa-principal text-white px-6 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
+              CONOCER MÁS
+            </a>
+          </div>
+          <div className="rounded-lg overflow-hidden shadow-lg">
+            <LiteYouTubeEmbed
+              id={youtubeVideoId}
+              title="Video de Noticias"
+              noCookie={true}
+            />
+          </div>
         </div>
       </div>
     </section>

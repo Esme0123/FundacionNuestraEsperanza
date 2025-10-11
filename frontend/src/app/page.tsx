@@ -8,6 +8,7 @@ import Testimonials from "@/components/Testimonials";
 import News from "@/components/News";
 import Contact from "@/components/Contact";
 import Subscribe from "@/components/Suscribe";
+import Alliances from "@/components/Alliances"
 import Footer from "@/components/Footer";
 export default function HomePage() {
   return (
@@ -22,6 +23,7 @@ export default function HomePage() {
       <News/>
       <Contact/>
       <Subscribe/>
+      <Alliances/>
       <Footer />
     </main>
   );
