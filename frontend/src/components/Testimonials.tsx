@@ -51,7 +51,7 @@ const Testimonials = () => {
           ))}
         </div>
         <div className="text-center mt-12">
-          <a href="#" className="bg-rosa-principal text-white px-8 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
+          <a href="/testimonials" className="bg-rosa-principal text-white px-8 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
             VER MÁS
           </a>
         </div>

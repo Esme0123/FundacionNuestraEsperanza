@@ -26,7 +26,7 @@ const News = () => {
             <p className="text-black font-sans mb-8">
               La Casita un Hogar lejos de casa está abierta, gracias a todas las personas que nos apoyan con un granito de arena a solventar los gastos del Albergue y del Comedor.
             </p>
-            <a href="#" className="bg-rosa-principal text-white px-6 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
+            <a href="/news" className="bg-rosa-principal text-white px-6 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
               CONOCER MÁS
             </a>
           </div>

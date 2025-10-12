@@ -47,7 +47,7 @@ const Programs = () => {
               <div className="p-6 flex flex-col flex-grow">
                 <h4 className="text-2xl font-bold text-black mb-4 font-title">{program.title}</h4>
                 <p className="text-black font-sans mb-6 flex-grow">{program.description}</p>
-                <a href="#" className="bg-rosa-principal text-white px-6 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button self-start">
+                <a href="/programas" className="bg-rosa-principal text-white px-6 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button self-start">
                   CONOCER MÁS
                 </a>
               </div>
