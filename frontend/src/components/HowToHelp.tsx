@@ -40,8 +40,8 @@ const HowToHelp = () => {
             </a>
           </div>
         </div>
-        <div className="mt-12 text-center">
-          <a href="#" className="bg-turquesa-secundario px-7 py-5 rounded-full font-bold hover:bg-blue-200 text-azul-marino transition duration-300 font-button">
+        <div  className="mt-12 text-center">
+          <a href="/como-ayudar" className="bg-turquesa-secundario px-7 py-5 rounded-full font-bold hover:bg-blue-200 text-azul-marino transition duration-300 font-button">
             CONOCER MÁS
           </a>
         </div>

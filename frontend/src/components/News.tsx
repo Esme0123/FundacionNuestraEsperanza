@@ -3,7 +3,7 @@ import React from 'react';
 import YouTube from 'react-youtube';
 
 const News = () => {
-  const videoId = "IpCPTWZszJc";
+  const videoId = "JDXusqw60Gg";
   const opts = {
     height: '100%',
     width: '100%',

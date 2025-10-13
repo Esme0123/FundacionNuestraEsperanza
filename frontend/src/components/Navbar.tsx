@@ -5,10 +5,10 @@ const Navbar = () => {
   const navLinks = [
     { name: "Inicio", path: "/" },
     { name: "Quiénes Somos", path: "/quienes-somos" },
-    { name: "Programas", path: "/#programas" }, 
-    { name: "Cómo Ayudar", path: "/#como-ayudar" },
-    { name: "Testimonios", path: "/#testimonios" },
-    { name: "Noticias", path: "/#noticias" },
+    { name: "Programas", path: "/programas" }, 
+    { name: "Cómo Ayudar", path: "/como-ayudar" },
+    { name: "Testimonios", path: "/testimonials" },
+    { name: "Noticias", path: "/news" },
     { name: "Contacto", path: "/#contacto" },
   ];
   return (

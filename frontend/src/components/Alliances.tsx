@@ -7,6 +7,7 @@ const Alliances = () => {
     { src: 'ic_childhood.png', url: 'https://ccieurope.eu/' }, 
     { src: 'ic_canica.jpeg', url: 'https://canica.org.mx/' },
     { src: 'ic_jude.jpg', url: 'https://www.stjude.org/es/' },
+    { src: 'ic_matters.png', url: 'https://foundation-s-mychildmatters.opendatasoft.com/pages/home/' },
   ];
 
   return (
