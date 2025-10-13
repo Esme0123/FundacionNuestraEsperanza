@@ -118,7 +118,6 @@ const Testimonials = () => {
                     </>
                 );
 
-                // 3. LÓGICA DE REDIRECCIÓN: Envolver en <a> si hay externalLink válido.
                 if (testimonial.externalLink && testimonial.externalLink !== '#') {
                     return (
                         <a 
@@ -128,7 +127,6 @@ const Testimonials = () => {
                             rel="noopener noreferrer" 
                             data-aos="zoom-in" 
                             data-aos-delay={100 * index} 
-                            // Añadir 'block' para que el enlace ocupe todo el espacio de la cuadrícula
                             className="group bg-white shadow-lg overflow-hidden relative cursor-pointer block" 
                         >
                             {CardContent}
