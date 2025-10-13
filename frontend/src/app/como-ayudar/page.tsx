@@ -4,111 +4,194 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import DonationModal from "@/components/DonationModal"; 
+import DonationModal from "@/components/DonationModal";
+import Alliances from "@/components/Alliances";
 
 const HelpPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (
     <>
-      <main>
+      <main className="bg-white">
         <Navbar />
 
-        {/* Hero Section */}
         <motion.section
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
-          className="relative h-80 flex items-center justify-center text-white"
+          className="relative h-[60vh] flex items-center justify-center text-white"
         >
-          <Image src="/IMG/hero-help.jpg" alt="Fondo Cómo Ayudar" layout="fill" objectFit="cover" className="-z-10 object-top" />
-          <div className="absolute inset-0 bg-black opacity-50"></div>
-          <motion.h1
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-6xl font-bold z-10 font-title"
+          <Image src="/IMG/help-hero-bg.jpg" alt="Fondo Cómo Ayudar" layout="fill" objectFit="cover" className="z-10 object-center" />
+          <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
+          <motion.div
+            className="relative z-20 text-center"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              visible: { transition: { staggerChildren: 0.3 } }
+            }}
           >
-            Cómo Ayudar
-          </motion.h1>
+            <motion.h1
+              variants={{
+                hidden: { y: 20, opacity: 0 },
+                visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } }
+              }}
+              className="text-6xl font-bold font-title"
+            >
+              Cómo Ayudar
+            </motion.h1>
+            <motion.p
+              variants={{
+                hidden: { y: 20, opacity: 0 },
+                visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } }
+              }}
+              className="mt-2 text-xl font-sans"
+            >
+              Tu apoyo es nuestra fortaleza
+            </motion.p>
+          </motion.div>
         </motion.section>
 
-        <section className="relative py-20">
-          <Image src="/IMG/ayudar.png" alt="Fondo de ayuda" layout="fill" objectFit="cover" className="-z-10" />
-          <div className="absolute inset-0 bg-azul-marino opacity-80"></div>
+        <section id="como-ayudar" className="relative py-20">
+            <div className="absolute inset-0 z-0">
+                    <Image
+                      src="/IMG/ayudar.png"
+                      alt="Niños sonriendo"
+                      layout="fill"
+                      objectFit="cover"
+                      quality={85}
+                    />
+                  </div>
           <div className="container mx-auto px-6 relative z-10 text-white">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false }}
               transition={{ duration: 0.8 }}
-              className="text-4xl font-bold text-center mb-12 font-title"
+              className="text-4xl font-bold text-center mb-4 font-title"
             >
               Únete a Nuestra Causa
             </motion.h2>
-            <div className="grid md:grid-cols-2 gap-16 max-w-5xl mx-auto">
-              {/* Card Voluntariado */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="flex justify-center mb-12"
+            >
+              <div className="bg-rosa-principal w-20 h-1.5"></div>
+            </motion.div>
+            <div className="grid md:grid-cols-2 gap-16 max-w-5xl mx-auto ">
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: false }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="text-center"
+                className="text-center shadow-xl rounded-lg"
               >
                 <h3 className="text-3xl font-bold mb-4 font-title">VOLUNTARIADO</h3>
                 <p className="mb-8 text-gray-300">Tu tiempo y talento son un regalo invaluable. Ayúdanos a organizar eventos, brindar apoyo y llevar alegría a nuestros niños.</p>
                 <a href="#" className="bg-turquesa-secundario px-8 py-3 rounded-full font-bold hover:bg-blue-200 text-azul-marino transition duration-300 font-button">SER VOLUNTARIO</a>
               </motion.div>
-              {/* Card Donaciones */}
               <motion.div
                 initial={{ opacity: 0, x: 50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: false }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="text-center"
+                className="text-center shadow-xl rounded-lg"
               >
                 <h3 className="text-3xl font-bold mb-4 font-title">DONACIONES</h3>
                 <p className="mb-8 text-gray-300">Cada contribución es un pilar fundamental que sostiene nuestro albergue, alimenta a nuestras familias y financia la esperanza.</p>
-                {/* ESTE BOTÓN ABRE EL MODAL */}
                 <button onClick={() => setModalOpen(true)} className="bg-rosa-principal px-8 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">DONAR AHORA</button>
               </motion.div>
             </div>
           </div>
         </section>
 
-        {/* Sección Adicional: Otras Formas de Ayudar (las 2 cards) */}
         <section className="bg-beige-claro py-20">
           <div className="container mx-auto px-6">
-            <h2 className="text-4xl font-bold text-black mb-12 text-center font-title">Más Formas de Involucrarte</h2>
-            <div className="grid md:grid-cols-2 gap-10 max-w-4xl mx-auto">
-              {/* Card Difunde */}
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false }}
-                transition={{ duration: 0.8 }}
-                whileHover={{ y: -10, boxShadow: "0px 20px 30px rgba(0,0,0,0.1)" }}
-                className="bg-white p-8 rounded-lg shadow-lg text-center"
-              >
-                <h3 className="text-2xl font-bold font-title mb-4">Difunde la Voz</h3>
-                <p className="font-sans text-gray-700">Comparte nuestras historias en tus redes sociales. Tu voz puede inspirar a otros a unirse a nuestra causa.</p>
-              </motion.div>
-              {/* Card Donaciones en Especie */}
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                whileHover={{ y: -10, boxShadow: "0px 20px 30px rgba(0,0,0,0.1)" }}
-                className="bg-white p-8 rounded-lg shadow-lg text-center"
-              >
-                <h3 className="text-2xl font-bold font-title mb-4">Donaciones en Especie</h3>
-                <p className="font-sans text-gray-700">Aceptamos alimentos no perecederos, juguetes y material escolar que alegran el día a día de nuestros niños.</p>
-              </motion.div>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8 }}
+              className="text-4xl font-bold text-black mb-12 text-center font-title"
+            >
+              Más Formas de Involucrarte
+            </motion.h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                { title: 'Alianzas', description: 'Tu empresa puede ser un aliado estratégico.', image: '/IMG/help.jpeg' },
+                { title: 'En Especie', description: 'Aceptamos con gratitud alimentos no perecederos, artículos de higiene y artículos de limpieza.', image: '/IMG/Events/rifaSolidaria.jpg' },
+                { title: 'Eventos', description: 'Participa y apoya nuestros eventos de recaudación.', image: '/IMG/Events/carreraPedestre.jpg' }
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.8, delay: index * 0.2 }}
+                  whileHover={{ y: -10, boxShadow: "0px 20px 30px rgba(0,0,0,0.1)" }}
+                  className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col"
+                >
+                  <div className="relative w-full h-56">
+                    <Image src={item.image} alt={item.title} layout="fill" objectFit="cover" />
+                  </div>
+                  <div className="p-6 text-center">
+                    <h3 className="text-2xl font-bold font-title mb-3">{item.title}</h3>
+                    <p className="font-sans text-gray-700">{item.description}</p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
-        
+
+        <section className="relative py-24 text-white text-center">
+          <Image src="/IMG/hero_help.jpg" alt="Fondo para difundir la voz" layout="fill" objectFit="cover" className="-z-10" />
+          <div className="absolute inset-0 bg-rosa-principal bg-opacity-80"></div>
+          <div className="relative container mx-auto px-6 max-w-2xl">
+            <motion.h2
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-4xl font-bold mb-4 font-title"
+            >
+              Tu Voz Tiene Poder
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="font-sans text-lg mb-8"
+            >
+              Una simple acción puede generar una ola de esperanza. Comparte nuestra misión y ayúdanos a llegar a más corazones.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="flex justify-center space-x-6"
+            >
+                <a href="https://www.facebook.com/NuestraEsperanzaBo/?locale=es_LA" className="text-4xl hover:scale-125 transition-transform">
+                    <Image
+                    src="/IMG/ic_facebook.png" alt='Facebook' width={60} height={60}
+                /></a>
+                <a href="https://www.tiktok.com/@fund.nuestra.esperanza?_t=ZM-90VE1jzCdp5&_r=1 " className='text-4xl hover:scale-125 transition-transform'>
+                    <Image
+                    src="/IMG/ic_tiktok.png" alt='TikTok' width={60} height={60}
+                /></a>
+                <a href="https://www.instagram.com/fundacionnuestraesperanza/?hl=es-la" className='text-4xl hover:scale-125 transition-transform'>
+                    <Image
+                    src="/IMG/ic_instagram.png" alt='Instagram' width={60} height={60}
+                /></a>
+            </motion.div>
+          </div>
+        </section>
+        <Alliances />
         <Footer />
       </main>
       

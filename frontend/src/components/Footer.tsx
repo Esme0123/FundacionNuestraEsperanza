@@ -20,6 +20,10 @@ const Footer = () => {
               <Image
               src="/IMG/ic_facebook.png" alt='Facebook' width={30} height={30}
               /></a>
+              <a href="https://www.tiktok.com/@fund.nuestra.esperanza?_t=ZM-90VE1jzCdp5&_r=1">
+              <Image
+              src="/IMG/ic_tiktok.png" alt='TikTok' width={30} height={30}
+              /></a>
               <a href="https://www.instagram.com/fundacionnuestraesperanza/?hl=es-la"><Image
               src="/IMG/ic_instagram.png" alt='Instagram' width={30} height={30}
               /></a>
