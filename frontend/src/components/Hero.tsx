@@ -27,21 +27,29 @@ const Hero = () => {
   return (
     <section 
       className="relative text-center text-white flex items-center justify-center h-[70vh]">
-      <Image
-        src="/IMG/Home.jpg" 
-        alt="Fondo de la fundación"
-        layout="fill"
-        objectFit="cover" 
-        quality={90} 
-        priority 
-        className="-z-10" 
-      />  
+      <motion.div
+        className="absolute inset-0 z-0"
+        animate={{ scale: [1, 1.05, 1] }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <Image
+          src="/IMG/Home.jpg" 
+          alt="Fondo de la fundación"
+          layout="fill"
+          objectFit="cover" 
+          quality={90} 
+          priority 
+        />
+      </motion.div>
+      <div className="absolute inset-0 bg-azul-marino opacity-35 z-0"></div>
       <div className="absolute inset-0 bg-azul-marino opacity-35 -z-10"></div>
       <motion.div
         className="relative container mx-auto px-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
+        whileHover={{ scale: 1.02 }}
+        transition={{ duration: 0.5 }}
       >
         <motion.h1 variants={itemVariants} className="text-5xl md:text-6xl font-extrabold leading-tight font-title">
           Toda vida merece esperanza

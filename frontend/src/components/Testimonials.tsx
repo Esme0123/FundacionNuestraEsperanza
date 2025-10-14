@@ -1,5 +1,7 @@
+"use client";
 import React from 'react';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 const Testimonials = () => {
   const testimonials = [
@@ -30,26 +32,59 @@ const Testimonials = () => {
         <div className="flex justify-center">
               <div className="bg-rosa-principal w-20 h-2 mb-5"></div>
             </div>
-        <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div key={index} data-aos="zoom-in" data-aos-delay={100 * index} className="bg-white shadow-lg overflow-hidden">
-              <div className="relative w-full h-0 pb-[100%] overflow-hidden"> 
-                <Image
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  layout="fill"
-                  objectFit="cover" 
-                  className="absolute inset-0"
-                />
-              </div>
-              <div className="p-6 text-center">
-                <h4 className="text-xl font-bold text-black mb-2 font-title">{testimonial.name}</h4>
-                <p className="text-black font-sans">{testimonial.quote}</p>
-                <p className="text-sm text-gray-500 font-sans mt-2">{testimonial.age}</p>
-              </div>
-            </div>
+        <motion.div 
+          className="grid md:grid-cols-3 gap-8"
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: false, amount: 0.2 }}
+          transition={{ staggerChildren: 0.2 }}
+        >
+          {testimonials.map((testimonial) => (
+            <motion.div 
+              key={testimonial.name}
+              variants={{
+                initial: { opacity: 0, y: 50 },
+                animate: { opacity: 1, y: 0 }
+              }}
+              whileHover="hover"
+              className="relative bg-white shadow-lg overflow-hidden"
+            >
+              <motion.div
+                variants={{
+                  initial: { filter: "blur(0px)", scale: 1 },
+                  hover: { filter: "blur(4px)", scale: 0.95, opacity: 0.7 }
+                }}
+                transition={{ duration: 0.4 }}
+                className="group-hover:opacity-50"
+              >
+                  <div className="relative w-full h-0 pb-[100%]"> 
+                    <Image src={testimonial.image} alt={testimonial.name} layout="fill" objectFit="cover" className="absolute inset-0" />
+                  </div>
+                  <div className="p-6 text-center">
+                    <h4 className="text-xl font-bold text-black mb-2 font-title">{testimonial.name}</h4>
+                    <p className="text-black font-sans">{testimonial.quote}</p>
+                    <p className="text-sm text-gray-500 font-sans mt-2">{testimonial.age}</p>
+                  </div>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0 }}
+                variants={{ hover: { opacity: 1 } }}
+                transition={{ duration: 0.4 }}
+                className="absolute inset-0"
+              >
+                <div className="relative w-full h-0 pb-[100%]"> 
+                  <Image src={testimonial.image} alt={testimonial.name} layout="fill" objectFit="cover" className="absolute inset-0" />
+                </div>
+                <div className="p-6 text-center bg-white">
+                  <h4 className="text-xl font-bold text-black mb-2 font-title">{testimonial.name}</h4>
+                  <p className="text-black font-sans">{testimonial.quote}</p>
+                  <p className="text-sm text-gray-500 font-sans mt-2">{testimonial.age}</p>
+                </div>
+              </motion.div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
         <div className="text-center mt-12">
           <a href="/testimonials" className="bg-rosa-principal text-white px-8 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
             VER MÁS

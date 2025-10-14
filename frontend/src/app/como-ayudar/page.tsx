@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DonationModal from "@/components/DonationModal";
 import Alliances from "@/components/Alliances";
+import HowToHelp from '@/components/HowToHelp';
 
 const HelpPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -52,61 +53,7 @@ const HelpPage = () => {
           </motion.div>
         </motion.section>
 
-        <section id="como-ayudar" className="relative py-20">
-            <div className="absolute inset-0 z-0">
-                    <Image
-                      src="/IMG/ayudar.png"
-                      alt="Niños sonriendo"
-                      layout="fill"
-                      objectFit="cover"
-                      quality={85}
-                    />
-                  </div>
-          <div className="container mx-auto px-6 relative z-10 text-white">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
-              transition={{ duration: 0.8 }}
-              className="text-4xl font-bold text-center mb-4 font-title"
-            >
-              Únete a Nuestra Causa
-            </motion.h2>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="flex justify-center mb-12"
-            >
-              <div className="bg-rosa-principal w-20 h-1.5"></div>
-            </motion.div>
-            <div className="grid md:grid-cols-2 gap-16 max-w-5xl mx-auto ">
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: false }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="text-center shadow-xl rounded-lg"
-              >
-                <h3 className="text-3xl font-bold mb-4 font-title">VOLUNTARIADO</h3>
-                <p className="mb-8 text-gray-300">Tu tiempo y talento son un regalo invaluable. Ayúdanos a organizar eventos, brindar apoyo y llevar alegría a nuestros niños.</p>
-                <a href="#" className="bg-turquesa-secundario px-8 py-3 rounded-full font-bold hover:bg-blue-200 text-azul-marino transition duration-300 font-button">SER VOLUNTARIO</a>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: false }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="text-center shadow-xl rounded-lg"
-              >
-                <h3 className="text-3xl font-bold mb-4 font-title">DONACIONES</h3>
-                <p className="mb-8 text-gray-300">Cada contribución es un pilar fundamental que sostiene nuestro albergue, alimenta a nuestras familias y financia la esperanza.</p>
-                <button onClick={() => setModalOpen(true)} className="bg-rosa-principal px-8 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">DONAR AHORA</button>
-              </motion.div>
-            </div>
-          </div>
-        </section>
+        <HowToHelp />
 
         <section className="bg-beige-claro py-20">
           <div className="container mx-auto px-6">

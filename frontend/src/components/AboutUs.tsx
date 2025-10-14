@@ -1,10 +1,17 @@
+"use client";
 import React from 'react';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 const AboutUs = () => {
   return (
     <section className="mx-auto px-2 py-16 ">
       <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center p-10">
-        <div data-aos="fade-right">
+        <motion.div
+          initial={{ opacity: 0, x: -100 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false, amount: 0.3 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
           <h2 className="text-5xl font-bold text-black mb-4 font-title">QUIÉNES SOMOS</h2>
           <div className="bg-rosa-principal w-20 h-2 mb-5"></div>
           <h4 className='text-2xl font-sans text-black'>Misión, Visión y Propósito</h4>
@@ -15,14 +22,22 @@ const AboutUs = () => {
           <a href="/quienes-somos"  className="bg-turquesa-secundario px-7 py-5 rounded-full font-bold hover:bg-blue-200 text-azul-marino transition duration-300 font-button">
             CONOCER MÁS
           </a>
-        </div>
+        </motion.div>
         <div data-aos="fade-left" className="relative w-full h-96 rounded-lg shadow-lg overflow-hidden">
-          <Image 
-            src="/IMG/Equipo1.jpg" 
-            alt="Voluntarios de la fundación ayudando" 
-            layout="fill"
-            objectFit="cover"
-          />
+          <motion.div
+            className="absolute inset-0"
+            initial={{ scale: 1.2 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ once: false, amount: 0.5 }}
+            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }} // Curva de easing suave
+          >
+            <Image 
+              src="/IMG/Equipo1.jpg" 
+              alt="Voluntarios de la fundación ayudando" 
+              layout="fill"
+              objectFit="cover"
+            />
+          </motion.div>
         </div>
       </div>
     </section>

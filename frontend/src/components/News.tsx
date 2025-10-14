@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import YouTube from 'react-youtube';
+import { motion } from 'framer-motion';
 
 const News = () => {
   const videoId = "JDXusqw60Gg";
@@ -15,7 +16,12 @@ const News = () => {
     <section id="noticias" className="bg-white py-16">
       <div className="container mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+          >
             <h2 className="text-4xl font-bold text-black mb-2 font-title">NOTICIAS</h2>
             <div className="flex justify-left">
               <div className="bg-rosa-principal w-20 h-2 mb-5"></div>
@@ -29,10 +35,16 @@ const News = () => {
             <a href="/news" className="bg-rosa-principal text-white px-6 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
               CONOCER MÁS
             </a>
-          </div>
-          <div className="relative aspect-video w-full rounded-lg overflow-hidden shadow-lg bg-black">
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="relative aspect-video w-full rounded-lg overflow-hidden shadow-lg bg-black"
+          >
             <YouTube videoId={videoId} opts={opts} className="absolute inset-0 w-full h-full" />
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
