@@ -46,6 +46,35 @@ const voluntarias = [
 
 
 const AboutPage = () => {
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 2,
+        }
+      },
+      {
+        breakpoint: 640,
+        settings: {
+          slidesToShow: 1,
+        }
+      }
+    ]
+  };
     // Hooks para el efecto Parallax de "Nuestra Historia"
     const historySectionRef = useRef(null);
     const { scrollYProgress } = useScroll({
@@ -57,21 +86,6 @@ const AboutPage = () => {
     const missionSectionRef = useRef(null);
     const { scrollYProgress: missionScroll } = useScroll({ target: missionSectionRef, offset: ["start end", "end start"] });
     const missionY = useTransform(missionScroll, [0, 1], ["-20%", "20%"]);
-    // Configuración del carrusel para voluntarias
-    const voluntariasSliderSettings = {
-      dots: true,
-      infinite: true,
-      speed: 500,
-      slidesToShow: 5,
-      slidesToScroll: 1,
-      autoplay: true,
-      autoplaySpeed: 3000,
-      responsive: [
-        { breakpoint: 1024, settings: { slidesToShow: 4 } },
-        { breakpoint: 768, settings: { slidesToShow: 3 } },
-        { breakpoint: 640, settings: { slidesToShow: 2 } }
-      ]
-    };
 
   return (
     <main>
@@ -229,7 +243,7 @@ En 2024, con el financiamiento de CCI y SIOP mediante el proyecto Home Away From
         >
           Voluntarias
         </motion.h3>
-        <Slider {...voluntariasSliderSettings}>
+        <Slider {...sliderSettings}>
           {voluntarias.map((volunteer) => (
             <div key={volunteer.name} className="px-2">
               <motion.div 

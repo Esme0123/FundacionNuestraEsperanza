@@ -13,10 +13,10 @@ const Quotes = () => {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 1000, 
+    speed: 1000,
     fade: true,
     autoplay: true,
-    autoplaySpeed: 5000, 
+    autoplaySpeed: 5000,
     arrows: false,
     slidesToShow: 1,
     slidesToScroll: 1
@@ -26,18 +26,18 @@ const Quotes = () => {
     <section className="relative text-white">
       <Slider {...settings}>
         {quotes.map((item, index) => (
-          <div key={index} className="relative h-96 flex items-center justify-center text-center">
-            <Image 
-              src={item.image} 
-              alt={`Fondo para frase de ${item.author}`} 
-              layout="fill" 
-              objectFit="cover" 
-              className="-z-10 object-cover object-center" 
+          <div key={index} className="relative h-[60vh] md:h-96 flex items-center justify-center text-center">
+            <Image
+              src={item.image}
+              alt={`Fondo para frase de ${item.author}`}
+              layout="fill"
+              objectFit="cover"
+              className="-z-10 object-cover object-center"
             />
             <div className="absolute inset-0 bg-black opacity-50"></div>
-            <div className="relative justify-center container mx-auto px-6 max-w-3xl text-center mt-32">
-              <p className="text-3xl font-sans italic">&quot;{item.quote}&quot;</p>
-              <p className="mt-4 font-bold text-lg font-title">- {item.author} -</p>
+            <div className="relative flex flex-col justify-center items-center h-full container mx-auto px-6 max-w-3xl text-center">
+              <p className="text-2xl md:text-3xl font-bold mb-4 font-title italic">&quot;{item.quote}&quot;</p>
+              <p className="text-md md:text-lg font-sans">- {item.author}</p>
             </div>
           </div>
         ))}

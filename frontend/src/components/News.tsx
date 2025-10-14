@@ -9,7 +9,7 @@ const News = () => {
     height: '100%',
     width: '100%',
     playerVars: {
-      autoplay: 0, 
+      autoplay: 0,
     },
   };
   return (
@@ -21,12 +21,13 @@ const News = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: false }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="order-2 md:order-1"
           >
-            <h2 className="text-4xl font-bold text-black mb-2 font-title">NOTICIAS</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-black mb-2 font-title">NOTICIAS</h2>
             <div className="flex justify-left">
               <div className="bg-rosa-principal w-20 h-2 mb-5"></div>
             </div>
-            <h4 className="text-2xl font-sans text-gray-700 mb-6">Recientes / Galería</h4>
+            <h4 className="text-xl md:text-2xl font-sans text-gray-700 mb-6">Recientes / Galería</h4>
             <p className="text-black font-sans mb-4">
               Son más de 8 años de haber vivido alegrias, por nuestros sobrevivientes y tristeza por la partida de nuestros pequeños, en ambos casos dejan huellas imborrables en cada uno de los corazones y mente de los voluntarios y todas las personas que tuvieron y tienen contacto con nuestros niños.</p>
             <p className="text-black font-sans mb-8">
@@ -41,9 +42,9 @@ const News = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: false }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="relative aspect-video w-full rounded-lg overflow-hidden shadow-lg bg-black"
+            className="relative w-full aspect-video rounded-lg overflow-hidden shadow-lg bg-black order-1 md:order-2"
           >
-            <YouTube videoId={videoId} opts={opts} className="absolute inset-0 w-full h-full" />
+            <YouTube videoId={videoId} opts={opts} className="absolute top-0 left-0 w-full h-full" />
           </motion.div>
         </div>
       </div>
