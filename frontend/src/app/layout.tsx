@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import {M_PLUS_Rounded_1c, Original_Surfer,Gluten} from "next/font/google";
 import AOSInitializer from "@/components/AOSInitializer";
+import ChatbaseBot from "@/components/Chatbasebot";
 
 const mPlus=M_PLUS_Rounded_1c({
   subsets:['latin'],
@@ -36,6 +37,7 @@ export default function RootLayout({
       <body>
         <AOSInitializer />
         {children}
+        <ChatbaseBot />
       </body>
     </html>
   );
