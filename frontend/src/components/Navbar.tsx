@@ -2,10 +2,11 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const { user, logout, isLoading } = useAuth();
   const navLinks = [
     { name: "Inicio", path: "/" },
     { name: "Quiénes Somos", path: "/quienes-somos" },
@@ -36,18 +37,40 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
-        </div>
 
-        <div className="hidden lg:flex items-center space-x-4">
-          <a href="#" className="text-white border border-white rounded-full px-6 py-2 hover:bg-white hover:text-azul-marino transition duration-300 font-button">
-            Login
+          {/* 3. LÓGICA DE AUTENTICACIÓN */}
+          {isLoading ? (
+            <span className="text-white">Cargando...</span>
+          ) : user ? (
+            // --- Usuario Logueado (Desktop) ---
+            <>
+              <Link href="/perfil" className="text-white hover:text-rosa-principal transition duration-300 font-bold">
+                Hola, {user.name.split(' ')[0]} {/* Muestra el primer nombre */}
+              </Link>
+              <button
+                onClick={logout}
+                className="text-white border border-white rounded-full px-6 py-2 hover:bg-white hover:text-azul-marino transition duration-300 font-button"
+              >
+                Salir
+              </button>
+            </>
+          ) : (
+            // --- Usuario No Logueado
+            <>
+              <Link href="/login" className="text-white border border-white rounded-full px-6 py-2 hover:bg-white hover:text-azul-marino transition duration-300 font-button">
+                Login
+              </Link>
+              <Link href="/registro" className="text-white hover:text-rosa-principal transition duration-300">
+                Registro
+              </Link>
+            </>
+          )}
+          
+          <a href="#donar-modal" /* <-- Cambia esto si usas un modal */
+             className="bg-rosa-principal text-white px-6 py-2 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button"
+          >
+            Donar
           </a>
-          <a href="#" className="bg-rosa-principal text-white px-6 py-2 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
-            DONAR
-          </a>
-          <div className="text-white pl-2">
-            <a href="#" className="font-bold">ES</a> / <a href="#" className="text-gray-300">EN</a>
-          </div>
         </div>
 
         {/* Mobile Menu Button */}
@@ -69,15 +92,44 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <a href="#" className="text-white border border-white rounded-full px-6 py-2 hover:bg-white hover:text-azul-marino transition duration-300 font-button">
-              Login
+            
+            {/* 4. LÓGICA DE AUTENTICACIÓN */}
+            {isLoading ? (
+              <span className="text-white">Cargando...</span>
+            ) : user ? (
+              // --- Usuario Logueado 
+              <>
+                <Link href="/perfil" className="text-white hover:text-rosa-principal transition duration-300" onClick={() => setIsMenuOpen(false)}>
+                  Mi Perfil ({user.name.split(' ')[0]})
+                </Link>
+                <button
+                  onClick={() => {
+                    logout();
+                    setIsMenuOpen(false);
+                  }}
+                  className="text-white hover:text-rosa-principal transition duration-300"
+                >
+                  Cerrar Sesión
+                </button>
+              </>
+            ) : (
+              // --- Usuario No Logueado (Móvil) ---
+              <>
+                <Link href="/login" className="text-white border border-white rounded-full px-6 py-2 hover:bg-white hover:text-azul-marino transition duration-300 font-button" onClick={() => setIsMenuOpen(false)}>
+                  Login
+                </Link>
+                <Link href="/registro" className="text-white hover:text-rosa-principal transition duration-300" onClick={() => setIsMenuOpen(false)}>
+                  Registro
+                </Link>
+              </>
+            )}
+
+            <a href="#donar-modal" 
+               onClick={() => setIsMenuOpen(false)} 
+               className="bg-rosa-principal text-white px-6 py-2 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button"
+            >
+              Donar Ahora
             </a>
-            <a href="#" className="bg-rosa-principal text-white px-6 py-2 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
-              DONAR
-            </a>
-            <div className="text-white">
-              <a href="#" className="font-bold">ES</a> / <a href="#" className="text-gray-300">EN</a>
-            </div>
           </div>
         </div>
       )}
