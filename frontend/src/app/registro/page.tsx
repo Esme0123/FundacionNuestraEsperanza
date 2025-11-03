@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation'; 
 import Link from 'next/link';
-
+import Image from 'next/image';
 export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -82,6 +82,17 @@ export default function RegisterPage() {
     // Recomiendo agregar un Navbar y Footer aquí
     <div className="flex items-center justify-center min-h-screen bg-beige-claro">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+        <div className="flex justify-center mb-4">
+          <Link href="/">
+            <Image
+              src="/IMG/Logo.jpg" 
+              alt="Volver al Inicio - Fundación Nuestra Esperanza"
+              width={180}
+              height={54}
+              className="cursor-pointer"
+            />
+          </Link>
+        </div>
         <h2 className="text-3xl font-bold text-center text-azul-marino font-title">
           Crear una Cuenta
         </h2>

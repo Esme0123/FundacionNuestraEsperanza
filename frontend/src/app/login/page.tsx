@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -60,11 +61,35 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
-
+  const handleMockLogin = () => {
+    // Datos falsos para simular la respuesta del backend
+    const mockUser = {
+      id: 99, // ID de prueba
+      name: 'Usuario de Prueba',
+      email: 'prueba@fundacion.org'
+    };
+    const mockToken = 'fake-developer-token-12345';
+    
+    // Usamos la misma función login() de nuestro AuthContext
+    login(mockUser, mockToken); 
+    
+    // Redirigimos al perfil
+    router.push('/perfil');
+  };
   return (
-    // Recomiendo agregar un Navbar y Footer aquí
     <div className="flex items-center justify-center min-h-screen bg-beige-claro">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+        <div className="flex justify-center mb-4">
+          <Link href="/">
+            <Image
+              src="/IMG/Logo.jpg" 
+              alt="Volver al Inicio - Fundación Nuestra Esperanza"
+              width={180}
+              height={54}
+              className="cursor-pointer"
+            />
+          </Link>
+        </div>
         <h2 className="text-3xl font-bold text-center text-azul-marino font-title">
           Iniciar Sesión
         </h2>
@@ -125,6 +150,18 @@ export default function LoginPage() {
             Regístrate
           </Link>
         </p>
+        {process.env.NODE_ENV === 'development' && (
+          <div className="text-center border-t pt-4 mt-4 border-dashed">
+            <p className="text-xs text-gray-500 font-sans mb-2">-- Solo para desarrollo --</p>
+            <button
+              type="button"
+              onClick={handleMockLogin}
+              className="w-full px-4 py-2 font-bold text-white transition-colors duration-300 rounded-md bg-turquesa-secundario hover:bg-amarillo-detalle font-button"
+            >
+              Probar Perfil (Simular Login)
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

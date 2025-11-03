@@ -1,3 +1,5 @@
+"use client";
+import React, { useState } from 'react';
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Stats from "@/components/Stats";
@@ -10,11 +12,15 @@ import Contact from "@/components/Contact";
 import Subscribe from "@/components/Suscribe";
 import Alliances from "@/components/Alliances"
 import Footer from "@/components/Footer";
+import DonationModal from '@/components/DonationModal';
 export default function HomePage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
   return (
     <main>
-      <Navbar />
-      <Hero />
+      <Navbar onOpenDonationModal={openModal} />
+      <Hero onOpenDonationModal={openModal} />
       <Stats/>
       <AboutUs />
       <Programs/>
@@ -25,6 +31,7 @@ export default function HomePage() {
       <Subscribe/>
       <Alliances/>
       <Footer />
+      <DonationModal isOpen={isModalOpen} onClose={closeModal} />
     </main>
   );
 }

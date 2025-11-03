@@ -2,8 +2,10 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion, Variants } from 'framer-motion';
-
-const Hero = () => {
+interface HeroProps {
+  onOpenDonationModal: () => void;
+}
+const Hero: React.FC<HeroProps> = ({ onOpenDonationModal }) => {
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -61,9 +63,12 @@ const Hero = () => {
           <a href="#" className="bg-turquesa-secundario px-6 py-4 md:px-5 md:py-5 rounded-full font-bold hover:bg-blue-200 text-azul-marino transition duration-300 font-button w-full sm:w-auto">
             CONOCER MÁS
           </a>
-          <a href="#" className="bg-rosa-principal px-6 py-4 md:px-5 md:py-5 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button w-full sm:w-auto">
+          <button 
+            onClick={onOpenDonationModal} 
+            className="bg-rosa-principal px-6 py-4 md:px-5 md:py-5 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button w-full sm:w-auto"
+          >
             DONAR AHORA
-          </a>
+          </button>
         </motion.div>
       </motion.div>
     </section>

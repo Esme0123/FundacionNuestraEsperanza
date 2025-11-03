@@ -3,8 +3,10 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-
-const Navbar = () => {
+interface NavbarProps {
+  onOpenDonationModal: () => void; // Función para abrir el modal
+}
+const Navbar: React.FC<NavbarProps> = ({ onOpenDonationModal }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, logout, isLoading } = useAuth();
   const navLinks = [
@@ -66,11 +68,12 @@ const Navbar = () => {
             </>
           )}
           
-          <a href="#donar-modal" /* <-- Cambia esto si usas un modal */
-             className="bg-rosa-principal text-white px-6 py-2 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button"
+          <button 
+            onClick={onOpenDonationModal} 
+            className="bg-rosa-principal text-white px-6 py-2 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button"
           >
-            Donar
-          </a>
+            DONAR
+          </button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -124,12 +127,15 @@ const Navbar = () => {
               </>
             )}
 
-            <a href="#donar-modal" 
-               onClick={() => setIsMenuOpen(false)} 
-               className="bg-rosa-principal text-white px-6 py-2 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button"
+            <button
+              onClick={() => {
+                onOpenDonationModal();
+                setIsMenuOpen(false);
+              }}
+              className="bg-rosa-principal text-white px-6 py-2 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button"
             >
-              Donar Ahora
-            </a>
+              DONAR AHORA
+            </button>
           </div>
         </div>
       )}
