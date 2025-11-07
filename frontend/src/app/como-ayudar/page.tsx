@@ -71,6 +71,7 @@ const HelpPage = () => {
                 { title: 'Alianzas', description: 'Tu empresa puede ser un aliado estratégico.', image: '/IMG/help.jpeg' },
                 { title: 'En Especie', description: 'Aceptamos con gratitud alimentos no perecederos, artículos de higiene y artículos de limpieza.', image: '/IMG/Events/rifaSolidaria.jpg' },
                 { title: 'Eventos', description: 'Participa y apoya nuestros eventos de recaudación.', image: '/IMG/Events/carreraPedestre.jpg' }
+                // { title: 'Corte Solidario: ¡Haz la Diferencia!', description: 'Únete a nuestros eventos y dona tu cabello para transformar vidas. Cada mecha cuenta. ¡Participa y apoya a quienes más lo necesitan!', image: '/IMG/Events/carreraPedestre.jpg' }
               ].map((item, index) => (
                 <motion.div
                   key={index}
