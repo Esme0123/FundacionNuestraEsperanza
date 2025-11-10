@@ -2,6 +2,10 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion, Variants } from 'framer-motion';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 const Programs = () => {
   const programs = [
     {
@@ -21,15 +25,45 @@ const Programs = () => {
       title: "Colaboración",
       description: "Tambien nos enorgullece ofrecer programas diseñados para respaldar integralmente a las familias afectadas por el cáncer infantil, ofeciendo talleres educativos, apoyo psicológico, y trabajos sociales.",
       color: "bg-amarillo-detalle"
-    }
+    },
+    {
+      image:"/IMG/Programs/apoyoSicologico.jpg",
+      title: "Apoyo Psicológico",
+      description: "Creamos ambientes de juego y esparcimiento para que los niños puedan seguir disfrutando de su infancia a pesar de la enfermedad.",
+      color: "bg-verde-lima"
+    },
   ];
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2, delayChildren: 0.2 }
-    }
+  // 2. CONFIGURACIÓN DEL SLIDER AÑADIDA
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    responsive: [
+      {
+        breakpoint: 1024, // En pantallas 'md' y 'lg' (reemplaza md:grid-cols-2)
+        settings: {
+          slidesToShow: 2,
+        }
+      },
+      {
+        breakpoint: 768, // En pantallas 'sm' (reemplaza grid-cols-1)
+        settings: {
+          slidesToShow: 1,
+        }
+      }
+    ]
   };
+  // const containerVariants: Variants = {
+  //   hidden: { opacity: 0 },
+  //   visible: {
+  //     opacity: 1,
+  //     transition: { staggerChildren: 0.2, delayChildren: 0.2 }
+  //   }
+  // };
 
   const cardVariants: Variants = {
     hidden: { y: 50, opacity: 0 },
@@ -47,35 +81,35 @@ const Programs = () => {
           <div className="bg-rosa-principal w-20 h-2 mb-5"></div>
         </div>
         <h3 className="text-xl md:text-2xl font-sans text-gray-700 text-center mb-12">Qué hacemos</h3>
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.1 }}
-        >
+
+        <Slider {...sliderSettings}>
           {programs.map((program) => (
-            <motion.div
-              key={program.title}
-              variants={cardVariants}
-              whileHover={{ y: -15, scale: 1.05, rotateX: 5, rotateY: -5, boxShadow: "0px 25px 40px rgba(0,0,0,0.15)" }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col" style={{ perspective: '1000px' }}
-            >
-              <div className={`w-full h-3 ${program.color}`}></div>
-              <div className="relative w-full h-0 pb-[66.66%] overflow-hidden">
-                <Image src={program.image} alt={`Imagen de ${program.title}`} layout="fill" objectFit="cover" className="absolute inset-0" />
-              </div>
-              <div className="p-6 flex flex-col flex-grow">
-                <h4 className="text-2xl font-bold text-black mb-4 font-title">{program.title}</h4>
-                <p className="text-black font-sans mb-6 flex-grow">{program.description}</p>
-                <a href="/programas" className="bg-rosa-principal text-white px-6 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button self-start">
-                  CONOCER MÁS
-                </a>
-              </div>
-            </motion.div>
+            <div key={program.title} className="p-4"> 
+              <motion.div
+                variants={cardVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.1 }}
+                whileHover={{ y: -15, scale: 1.05, rotateX: 5, rotateY: -5, boxShadow: "0px 25px 40px rgba(0,0,0,0.15)" }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full" 
+                style={{ perspective: '1000px' }}
+              >
+                <div className={`w-full h-3 ${program.color}`}></div>
+                <div className="relative w-full h-0 pb-[66.66%] overflow-hidden">
+                  <Image src={program.image} alt={`Imagen de ${program.title}`} layout="fill" objectFit="cover" className="absolute inset-0" />
+                </div>
+                <div className="p-6 flex flex-col flex-grow">
+                  <h4 className="text-2xl font-bold text-black mb-4 font-title">{program.title}</h4>
+                  <p className="text-black font-sans mb-6 flex-grow">{program.description}</p>
+                  <a href="/programas" className="bg-rosa-principal text-white px-6 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button self-start">
+                    CONOCER MÁS
+                  </a>
+                </div>
+              </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </Slider>
       </div>
     </section>
   );

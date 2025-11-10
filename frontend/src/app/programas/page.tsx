@@ -19,7 +19,7 @@ const allPrograms = [
     {
       image:"/IMG/colaboracion.jpg",
       title: "Apoyo Integral",
-      description: "Ofrecemos talleres educativos, apoyo psicológico y asistencia social para fortalecer a las familias en cada paso del camino.",
+      description: "Ofrecemos talleres educativos y asistencia social para fortalecer a las familias en cada paso del camino.",
     },
     {
       image:"/IMG/transporte.jpg",
@@ -27,14 +27,14 @@ const allPrograms = [
       description: "Facilitamos el transporte desde y hacia el hospital para asegurar que los niños no pierdan sus citas médicas y tratamientos vitales.",
     },
     {
-      image:"/IMG/recreacion.jpg",
-      title: "Espacios de Recreación",
+      image:"/IMG/Programs/apoyoSicologico.jpg",
+      title: "Apoyo Psicológico",
       description: "Creamos ambientes de juego y esparcimiento para que los niños puedan seguir disfrutando de su infancia a pesar de la enfermedad.",
     },
     {
       image:"/IMG/educacion.jpg",
       title: "Soporte Educativo",
-      description: "Brindamos apoyo escolar y materiales para que los niños no se atrasen en sus estudios durante su estancia con nosotros.",
+      description: "Acompañamos a los niños y sus familias con orientación emocional y espacios de escucha, ayudándoles a enfrentar el tratamiento con fortaleza, esperanza y una sonrisa.",
     }
 ];
 
