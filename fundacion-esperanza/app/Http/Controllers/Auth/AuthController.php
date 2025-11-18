@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\ChangePasswordRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\Persona;
@@ -123,5 +124,35 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Sesion cerrada']);
+    }
+
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        try {
+            $persona = $request->user();
+
+            // Verificar que la contraseña actual sea correcta
+            if (!Hash::check($request->password_actual, $persona->contrasenia)) {
+                return response()->json(['message' => 'La contraseña actual es incorrecta'], 401);
+            }
+
+            // Actualizar la contraseña
+            $persona->contrasenia = Hash::make($request->password_nueva);
+            $persona->save();
+
+            // Revocar todos los tokens existentes para forzar relogueo
+            $persona->tokens()->delete();
+
+            return response()->json([
+                'message' => 'Contraseña actualizada correctamente. Por favor inicia sesión nuevamente.',
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Error al cambiar contraseña', [
+                'id_persona' => $request->user()->id_persona ?? null,
+                'exception' => $e,
+            ]);
+
+            return response()->json(['message' => 'Error interno al cambiar contraseña'], 500);
+        }
     }
 }
