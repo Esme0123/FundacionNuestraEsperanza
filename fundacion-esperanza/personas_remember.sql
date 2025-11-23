@@ -1,0 +1,1 @@
+ALTER TABLE personas ADD COLUMN remember_token VARCHAR(100) NULL;
