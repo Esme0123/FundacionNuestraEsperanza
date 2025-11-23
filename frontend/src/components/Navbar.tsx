@@ -47,8 +47,8 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenDonationModal }) => {
             // --- Usuario Logueado (Desktop) ---
             <>
               <Link href="/perfil" className="text-white hover:text-rosa-principal transition duration-300 font-bold">
-                Hola, {user.name.split(' ')[0]} {/* Muestra el primer nombre */}
-              </Link>
+                Hola, {user?.name?.split(' ')[0]} {/* Muestra el primer nombre */}
+              </Link>a
               <button
                 onClick={logout}
                 className="text-white border border-white rounded-full px-6 py-2 hover:bg-white hover:text-azul-marino transition duration-300 font-button"
