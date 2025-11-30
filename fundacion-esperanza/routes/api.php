@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RoleController;
 use App\Http\Controllers\DonationController;
 use Illuminate\Support\Facades\Route;
+use App\Models\Program;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,4 +45,19 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('roles', [RoleController::class, 'index']);
     Route::post('users/{userId}/roles/assign', [RoleController::class, 'assign']);
     Route::post('users/{userId}/roles/revoke', [RoleController::class, 'revoke']);
+});
+
+//Programas API Endpoint
+Route::get('/programs', function () {
+    return Program::all()->map(function ($program) {
+        // Transformamos los datos para que el frontend los entienda fácil
+        return [
+            'id' => $program->id,
+            'title' => $program->title,
+            'description' => $program->description,
+            // Esto genera la URL completa de la imagen (http://.../storage/...)
+            'image' => asset('storage/' . $program->image), 
+            'color' => $program->color,
+        ];
+    });
 });
