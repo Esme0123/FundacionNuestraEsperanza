@@ -1,20 +1,35 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Certificado de Prueba</title>
-    <style>
-        body { margin: 0; padding: 0; }
-    </style>
-</head>
-<body>
-    <div style="text-align: center; padding: 50px; border: 2px solid #333;">
-        <h1>CERTIFICADO DE PRUEBA SIMPLE</h1>
-        <p>Este archivo es para confirmar que DomPDF funciona en tu entorno.</p>
-        <p>Donante: <strong>{{ $donante_nombre }}</strong></p>
-        <p>Monto: {{ $donacion_monto }}</p>
-        <p>Folio: {{ $certificado_uuid }}</p>
-        <p style="color: green; font-weight: bold;">¡Si ves este PDF en tu carpeta, la generación funciona!</p>
+            <div class="folio">Folio: {{ $certificado_uuid }}</div>
+            
+            <div class="header">
+                <div class="logo-text">Fundación Nuestra Esperanza</div>
+                <h1>Certificado de Donación</h1>
+            </div>
+
+            <div class="content">
+                <p class="text-intro">La Fundación Nuestra Esperanza certifica y agradece profundamente a:</p>
+                
+                <div class="donor-name">{{ $donante_nombre }}</div>
+                
+                <div class="donation-details">
+                    <p>Por su generosa contribución de:</p>
+                    <p class="amount">{{ $donacion_monto }}</p>
+                    <p>Realizada el día <span class="date">{{ $donacion_fecha }}</span></p>
+                </div>
+
+                <div class="quote">
+                    "Tu aporte hace posible que sigamos construyendo esperanza y transformando vidas."
+                </div>
+            </div>
+
+            <div class="footer">
+                <div class="signature-section">
+                    <div class="signature-line"></div>
+                    <p style="margin: 0; font-weight: bold; color: #12296C;">Dirección Ejecutiva</p>
+                </div>
+                <p>Fundación Nuestra Esperanza &bull; www.fundacionnuestraesperanza.org</p>
+                <p>Este documento es un comprobante oficial de su donación.</p>
+            </div>
+        </div>
     </div>
 </body>
 </html>

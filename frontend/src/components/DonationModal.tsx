@@ -30,12 +30,20 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
     }
 
     // TODO: Reemplazar con la URL de producción cuando esté lista
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://tu-api-laravel.com';
+    // Por defecto en desarrollo usar localhost para evitar errores DNS
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
     try {
       // 1. Llamar a tu API de Laravel para iniciar el pago
+      // Si la API usa Sanctum y sesiones, pedir primero la cookie CSRF
+      await fetch(`${API_URL}/sanctum/csrf-cookie`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
       const response = await fetch(`${API_URL}/api/donations/initiate`, {
         method: 'POST',
+        credentials: token ? 'omit' : 'include',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CertificadoController;
-//Esta ruta es la que usa DonacionResource para generar el enlace de descarga
-Route::get('/certificados/{uuid}', [CertificadoController::class, 'descargar'])
-     ->name('certificados.descargar');
+use App\Http\Controllers\CertificateController;
+
+Route::get('/certificates/{uuid}', [CertificateController::class, 'download'])
+     ->name('certificates.download');
 Route::get('/', function () {
     return view('welcome');
 });

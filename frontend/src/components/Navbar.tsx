@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+
 interface NavbarProps {
-  onOpenDonationModal: () => void; // Función para abrir el modal
+  onOpenDonationModal?: () => void; // Función para abrir el modal (opcional)
 }
-const Navbar: React.FC<NavbarProps> = ({ onOpenDonationModal }) => {
+
+const Navbar: React.FC<NavbarProps> = ({ onOpenDonationModal = () => { } }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, logout, isLoading } = useAuth();
   const navLinks = [
@@ -48,7 +50,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenDonationModal }) => {
             <>
               <Link href="/perfil" className="text-white hover:text-rosa-principal transition duration-300 font-bold">
                 Hola, {user?.name?.split(' ')[0]} {/* Muestra el primer nombre */}
-              </Link>a
+              </Link>
               <button
                 onClick={logout}
                 className="text-white border border-white rounded-full px-6 py-2 hover:bg-white hover:text-azul-marino transition duration-300 font-button"
@@ -67,9 +69,9 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenDonationModal }) => {
               </Link>
             </>
           )}
-          
-          <button 
-            onClick={onOpenDonationModal} 
+
+          <button
+            onClick={onOpenDonationModal}
             className="bg-rosa-principal text-white px-6 py-2 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button"
           >
             DONAR
@@ -95,7 +97,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenDonationModal }) => {
                 {link.name}
               </Link>
             ))}
-            
+
             {/* 4. LÓGICA DE AUTENTICACIÓN */}
             {isLoading ? (
               <span className="text-white">Cargando...</span>

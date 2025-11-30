@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class DonationResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'date' => $this->date->format('Y-m-d H:i:s'), 
+            'amount' => $this->amount,
+            'formatted_amount' => $this->formatted_amount, // e.g., "250,00 Bs."
+            'status' => $this->status,
+            'provider' => $this->provider,
+            'is_recurring' => (bool) $this->is_recurring,
+            
+            // Certificate transformation (if loaded)
+            'certificate' => $this->whenLoaded('certificate', function () {
+                if ($this->certificate) {
+                    return [
+                        'folio' => $this->certificate->folio,
+                        'download_link' => route('certificates.download', ['uuid' => $this->certificate->folio]),
+                        'issued_on' => $this->certificate->issued_on->format('Y-m-d H:i:s'),
+                    ];
+                }
+                return null;
+            }),
+        ];
+    }
+}

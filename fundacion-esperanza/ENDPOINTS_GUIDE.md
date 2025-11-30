@@ -1,31 +1,46 @@
-## Endpoints de Autenticación - Guía de Uso
+# API Endpoints Guide
 
-### 1. Login
-**Endpoint**: `POST /api/auth/login`
+This guide documents the available API endpoints for the application. All endpoints are prefixed with `/api`.
 
-**Headers**:
-```
-Content-Type: application/json
-```
+## Authentication (Public)
+
+### 1. Register
+**Endpoint**: `POST /api/auth/register`
 
 **Body**:
 ```json
 {
-  "correo_electronico": "panel.test@fundacion.org",
-  "password": "password"
+  "name": "John",
+  "last_name": "Doe",
+  "email": "john.doe@example.com",
+  "password": "password123",
+  "password_confirmation": "password123",
+  "ci": "1234567"
 }
 ```
 
-**Respuesta exitosa (200)**:
+### 2. Login
+**Endpoint**: `POST /api/auth/login`
+
+**Body**:
 ```json
 {
-  "message": "Login exitoso",
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+```
+
+**Response (200)**:
+```json
+{
+  "message": "Login successful",
   "data": {
-    "token": "YOUR_API_TOKEN",
+    "token": "1|laravel_sanctum_token...",
     "user": {
-      "id": 2,
-      "nombre": "Test",
-      "correo_electronico": "panel.test@fundacion.org",
+      "id": 1,
+      "name": "John",
+      "last_name": "Doe",
+      "email": "john.doe@example.com",
       "roles": ["viewer"]
     }
   }
@@ -34,65 +49,79 @@ Content-Type: application/json
 
 ---
 
-### 2. Cambiar Contraseña
-**Endpoint**: `POST /api/auth/change-password`
+## User Profile (Protected)
+Requires Header: `Authorization: Bearer <token>`
 
-**Headers**:
-```
-Authorization: Bearer YOUR_API_TOKEN
-Content-Type: application/json
-```
+### 3. Get Current User
+**Endpoint**: `GET /api/auth/me`
+
+### 4. Logout
+**Endpoint**: `POST /api/auth/logout`
+
+### 5. Change Password
+**Endpoint**: `POST /api/auth/change-password`
 
 **Body**:
 ```json
 {
-  "password_actual": "password",
-  "password_nueva": "password1",
-  "password_nueva_confirmation": "password1"
+  "current_password": "password123",
+  "new_password": "newpassword123",
+  "new_password_confirmation": "newpassword123"
 }
 ```
 
-**Respuesta exitosa (200)**:
+---
+
+## Donor Panel (Protected)
+Requires Header: `Authorization: Bearer <token>`
+
+### 6. My Donations
+**Endpoint**: `GET /api/auth/donations/my`
+
+**Response (200)**:
 ```json
 {
-  "message": "Contraseña actualizada correctamente. Por favor inicia sesión nuevamente."
+  "data": [
+    {
+      "id": 10,
+      "date": "2023-10-25 14:30:00",
+      "amount": "100.00",
+      "formatted_amount": "100,00 Bs.",
+      "status": "succeeded",
+      "certificate": {
+        "folio": "DON-0010",
+        "download_link": "http://localhost/certificates/download/DON-0010",
+        "issued_on": "2023-10-25 14:30:00"
+      }
+    }
+  ]
 }
 ```
 
-**Errores posibles**:
-- `401`: "La contraseña actual es incorrecta"
-- `422`: Errores de validación (contraseña muy corta, no coincide, etc.)
-- `500`: Error interno del servidor
-
 ---
 
-### Notas importantes:
-- La nueva contraseña debe tener mínimo **8 caracteres**
-- Después de cambiar la contraseña, todos los tokens se revocam (debes hacer login nuevamente)
-- El servidor debe estar ejecutándose en `http://localhost:8000`
+## Administration (Protected: Admin Role)
+Requires Header: `Authorization: Bearer <token>` AND User must have `admin` role.
 
----
+### 7. List Roles
+**Endpoint**: `GET /api/roles`
 
-## Ejemplo con cURL:
+### 8. Assign Role to User
+**Endpoint**: `POST /api/users/{userId}/roles/assign`
 
-### Login:
-```bash
-curl -X POST http://localhost:8000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "correo_electronico": "panel.test@fundacion.org",
-    "password": "password"
-  }'
+**Body**:
+```json
+{
+  "roles": ["admin", "editor"]
+}
 ```
 
-### Cambiar contraseña:
-```bash
-curl -X POST http://localhost:8000/api/auth/change-password \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "password_actual": "password",
-    "password_nueva": "password1",
-    "password_nueva_confirmation": "password1"
-  }'
+### 9. Revoke Role from User
+**Endpoint**: `POST /api/users/{userId}/roles/revoke`
+
+**Body**:
+```json
+{
+  "roles": ["editor"]
+}
 ```

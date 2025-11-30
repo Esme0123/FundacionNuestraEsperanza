@@ -5,14 +5,22 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
+function getCookie(name: string) {
+  if (typeof document === 'undefined') return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift();
+  return null;
+}
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
+
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  
-  const { login } = useAuth(); 
+
+  const { login } = useAuth();
   const router = useRouter(); // Para redirigir
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,14 +29,23 @@ export default function LoginPage() {
     setError(null);
 
     //Reemplazar con la URL de producción cuando esté lista
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://tu-api-laravel.com';
+    // Por defecto en desarrollo usar localhost para evitar errores DNS
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
     try {
-      const response = await fetch(`${API_URL}/api/login`, {
+      // Primero solicitar la cookie CSRF de Sanctum (necesario para autenticación basada en sesión)
+      await fetch(`${API_URL}/sanctum/csrf-cookie`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'X-XSRF-TOKEN': decodeURIComponent(getCookie('XSRF-TOKEN') || ''),
         },
         body: JSON.stringify({
           email,
@@ -46,12 +63,16 @@ export default function LoginPage() {
       }
 
       // --- ¡ÉXITO! ---
-      // 'data' debería tener la forma: { user: {...}, token: "..." }
-      if (data.user && data.token) {
-        login(data.user, data.token); // Usamos la función del AuthContext
+      // La respuesta del backend es: { message: "...", data: { user: {...}, token: "..." } }
+      // Por lo tanto, 'data' aquí contiene todo el JSON. Accedemos a data.data
+      const responseData = data.data;
+
+      if (responseData && responseData.user && responseData.token) {
+        login(responseData.user, responseData.token); // Usamos la función del AuthContext
         router.push('/perfil'); // Redirigimos al perfil del usuario
       } else {
-         setError('Respuesta inesperada del servidor.');
+        console.error('Estructura de respuesta inesperada:', data);
+        setError('Respuesta inesperada del servidor.');
       }
 
     } catch (err) {
@@ -61,6 +82,7 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+
   const handleMockLogin = () => {
     // Datos falsos para simular la respuesta del backend
     const mockUser = {
@@ -69,20 +91,21 @@ export default function LoginPage() {
       email: 'prueba@fundacion.org'
     };
     const mockToken = 'fake-developer-token-12345';
-    
+
     // Usamos la misma función login() de nuestro AuthContext
-    login(mockUser, mockToken); 
-    
+    login(mockUser, mockToken);
+
     // Redirigimos al perfil
     router.push('/perfil');
   };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-beige-claro">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         <div className="flex justify-center mb-4">
           <Link href="/">
             <Image
-              src="/IMG/Logo.jpg" 
+              src="/IMG/Logo.jpg"
               alt="Volver al Inicio - Fundación Nuestra Esperanza"
               width={180}
               height={54}
@@ -93,11 +116,11 @@ export default function LoginPage() {
         <h2 className="text-3xl font-bold text-center text-azul-marino font-title">
           Iniciar Sesión
         </h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label 
-              htmlFor="email" 
+            <label
+              htmlFor="email"
               className="text-sm font-bold text-gray-700 font-sans"
             >
               Correo Electrónico
@@ -113,8 +136,8 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label 
-              htmlFor="password" 
+            <label
+              htmlFor="password"
               className="text-sm font-bold text-gray-700 font-sans"
             >
               Contraseña

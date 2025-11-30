@@ -9,10 +9,9 @@ class RegisterRequest extends FormRequest
     public function authorize(): bool { return true; }
     public function rules(): array {
         return [
-            'nombre' => ['required','string','max:50'],
-            'apellido_paterno' => ['nullable','string','max:50'],
-            'apellido_materno' => ['nullable','string','max:50'],
-            'correo_electronico' => ['required','email','max:150','unique:personas,correo_electronico'],
+            'name' => ['required','string','max:50'],
+            'last_name' => ['nullable','string','max:100'],
+            'email' => ['required','email','max:150','unique:users,email'],
             'password' => ['required','string','min:8','confirmed'],
             'ci' => ['nullable','string','max:50'],
             'roles' => ['sometimes','array'],

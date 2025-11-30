@@ -10,9 +10,9 @@ class EnsureRole
     public function handle(Request $request, Closure $next, ...$roles)
     {
         $user = $request->user();
-        if (!$user) abort(401, 'No autenticado');
-        $has = $user->roles()->whereIn('nombre', $roles)->exists();
-        if (!$has) abort(403, 'No autorizado');
+        if (!$user) abort(401, 'Unauthenticated');
+        $has = $user->roles()->whereIn('name', $roles)->exists();
+        if (!$has) abort(403, 'Unauthorized');
         return $next($request);
     }
 }

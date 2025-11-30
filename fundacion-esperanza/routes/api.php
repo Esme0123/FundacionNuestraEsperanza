@@ -1,39 +1,35 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Auth\RolesController;
-use App\Http\Controllers\DonacionController;
+use App\Http\Controllers\Auth\RoleController;
+use App\Http\Controllers\DonationController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Rutas de Autenticación (Públicas)
+| Authentication Routes (Public)
 |--------------------------------------------------------------------------
-|
-| Estas rutas son para que cualquiera pueda registrarse o iniciar sesión.
-|
 */
 Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
+    Route::get('login', function () {
+        return response()->json(['message' => 'Unauthenticated.'], 401);
+    })->name('login');
 
     /*
     |--------------------------------------------------------------------------
-    | Rutas de Usuario (Protegidas)
+    | User Routes (Protected)
     |--------------------------------------------------------------------------
-    |
-    | Estas rutas requieren que el usuario envíe un Token de API válido.
-    | El middleware 'auth:sanctum' se encarga de esta protección.
-    |
     */
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('me', [AuthController::class, 'me']);
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('change-password', [AuthController::class, 'changePassword']);
 
-        // RUTA para el Panel de Donante
-        // Endpoint: GET /api/donaciones/mis
-        Route::get('donaciones/mis', [DonacionController::class, 'misDonaciones']);
+        // Donor Panel Routes
+        // Endpoint: GET /api/donations/my
+        Route::get('donations/my', [DonationController::class, 'myDonations']);
     });
     
 });
@@ -41,16 +37,11 @@ Route::prefix('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Rutas de Administración (Protegidas por Rol)
+| Admin Routes (Protected by Role)
 |--------------------------------------------------------------------------
-|
-| Estas rutas tienen DOBLE protección:
-| 1. 'auth:sanctum': El usuario debe estar logueado.
-| 2. 'role:admin': El usuario debe tener el rol de "admin" (nuestro middleware).
-|
 */
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
-    Route::get('roles', [RolesController::class, 'index']);
-    Route::post('personas/{idPersona}/roles/assign', [RolesController::class, 'assign']);
-    Route::post('personas/{idPersona}/roles/revoke', [RolesController::class, 'revoke']);
+    Route::get('roles', [RoleController::class, 'index']);
+    Route::post('users/{userId}/roles/assign', [RoleController::class, 'assign']);
+    Route::post('users/{userId}/roles/revoke', [RoleController::class, 'revoke']);
 });
