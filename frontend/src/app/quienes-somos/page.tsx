@@ -17,10 +17,10 @@ import AboutUs from '@/components/AboutUs';
 
 
 const directorio = [
-  { name: 'Mónica Mendez', role: 'Presidente', image: '/IMG/equipo/directorio/monica.jpg' },
-  { name: 'Mary Rengel', role: 'Vicepresidente', image: '/IMG/equipo/directorio/mary.jpg' },
-  { name: 'Teresa Quevedo', role: 'Tesorera', image: '/IMG/equipo/directorio/teresa.jpg' },
-  { name: 'Nora Arteaga', role: 'Secretaria', image: '/IMG/equipo/directorio/nora.jpg' }
+  { name: 'Mónica Mendez Saucedo', role: 'Presidente', image: '/IMG/equipo/directorio/MONICA-PRESIDENTE.jpeg' },
+  { name: 'Mary Gloria Rengel Velasco', role: 'Vicepresidente', image: '/IMG/equipo/directorio/MARY-VICE PRESIDENTE.jpeg' },
+  { name: 'Nora Virginia Michel de Arteaga', role: 'Tesorera', image: '/IMG/equipo/directorio/NORAH-TESORERA.jpeg' },
+  { name: 'María Teresa Quevedo Espinoza', role: 'Secretaria', image: '/IMG/equipo/directorio/MARIATERESA-SECRETARIA.jpeg' }
 ];
 
 const voluntarias = [

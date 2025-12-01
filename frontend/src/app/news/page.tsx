@@ -1,4 +1,5 @@
-"use client";
+ "use client";
+
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Navbar from "@/components/Navbar";
@@ -7,10 +8,10 @@ import Alliances from '@/components/Alliances';
 
 const allNews = [
     {
-        category: "Aniversarios",
+        category: "Eventos",
         image: "/IMG/Events/aniversarioFundacion.jpg",
-        title: "¡Celebramos nuestro Aniversario número 8!",
-        date: "26 de Agosto, 2025",
+        title: "VISITA EVALUCACIÓN  CCI. ",
+        date: "Enero, 2025",
     },
     {
         category: "Salud",
@@ -76,8 +77,7 @@ const NewsPage = () => {
                         <div className="bg-rosa-principal w-20 h-2"></div>
                     </div>
                 </div>
-            </section>
-            
+            </section>         
             <section className="py-16 md:py-20 bg-gray-50">
                 <div className="container mx-auto px-6">
                     {/* Filters Section */}
@@ -137,7 +137,7 @@ const NewsPage = () => {
                         ))}
                     </div>
 
-                    {/* Pagination */}
+                   {/* Pagination */}
                     <div className="flex justify-center items-center mt-16 space-x-2">
                         <button
                             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -151,7 +151,7 @@ const NewsPage = () => {
                                 key={number}
                                 onClick={() => setCurrentPage(number)}
                                 className={`px-4 py-2 rounded-md text-sm font-medium ${
-                                    currentPage === number ? 'bg-rosa-principal text-white' : 'text-gray-700 hover:bg-gray-200'
+                                   currentPage === number ? 'bg-rosa-principal text-white' : 'text-gray-700 hover:bg-gray-200'
                                 }`}
                             >
                                 {number}
@@ -167,7 +167,6 @@ const NewsPage = () => {
                     </div>
                 </div>
             </section>
-            
             <Alliances />
             <Footer />
         </main>
