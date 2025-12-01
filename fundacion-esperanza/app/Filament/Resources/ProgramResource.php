@@ -29,7 +29,7 @@ class ProgramResource extends Resource
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('image')
-                    ->image(),
+                    ->image()
                     ->directory('programs') 
                     ->imageResizeMode('cover') 
                     ->imageResizeTargetWidth('1080') // Redimensiona a 1080px de ancho máximo

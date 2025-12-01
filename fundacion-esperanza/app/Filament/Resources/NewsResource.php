@@ -30,7 +30,7 @@ class NewsResource extends Resource
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('image')
-                    ->image(),
+                    ->image()
                     ->directory('news') 
                     ->imageResizeMode('cover') 
                     ->imageResizeTargetWidth('1080') // Redimensiona a 1080px de ancho máximo

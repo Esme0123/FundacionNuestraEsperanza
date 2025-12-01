@@ -32,7 +32,7 @@ class TestimonialResource extends Resource
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('image')
-                    ->image(),
+                    ->image()
                     ->directory('testimonials') 
                     ->imageResizeMode('cover') 
                     ->imageResizeTargetWidth('1080') // Redimensiona a 1080px de ancho máximo
