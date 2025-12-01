@@ -8,6 +8,8 @@ use App\Models\Program;
 use Illuminate\Http\Request;
 use App\Models\News;
 use App\Models\Testimonial;
+use App\Models\ContactMessage;
+use App\Models\Subscriber;
 
 /*
 |--------------------------------------------------------------------------
@@ -92,4 +94,30 @@ Route::get('/testimonials', function () {
             'image' => $testimonial->image ? asset('storage/' . $testimonial->image) : null,
         ];
     });
+});
+// 4. ENDPOINT PARA CONTACTO (Recibe datos del formulario)
+Route::post('/contact', function (Request $request) {
+    // Validamos que los datos vengan bien
+    $validated = $request->validate([
+        'name' => 'required|string',
+        'last_name' => 'nullable|string',
+        'email' => 'required|email',
+        'message' => 'required|string',
+    ]);
+
+    // Guardamos en la BD
+    ContactMessage::create($validated);
+
+    return response()->json(['message' => 'Mensaje enviado con éxito'], 201);
+});
+
+// 5. ENDPOINT PARA SUSCRIPCIÓN
+Route::post('/subscribe', function (Request $request) {
+    $validated = $request->validate([
+        'email' => 'required|email|unique:subscribers,email',
+    ]);
+
+    Subscriber::create($validated);
+
+    return response()->json(['message' => 'Suscripción exitosa'], 201);
 });

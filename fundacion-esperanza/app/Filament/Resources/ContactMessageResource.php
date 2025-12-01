@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TestimonialResource\Pages;
-use App\Filament\Resources\TestimonialResource\RelationManagers;
-use App\Models\Testimonial;
+use App\Filament\Resources\ContactMessageResource\Pages;
+use App\Filament\Resources\ContactMessageResource\RelationManagers;
+use App\Models\ContactMessage;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,10 +12,11 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns\ToggleColumn;
 
-class TestimonialResource extends Resource
+class ContactMessageResource extends Resource
 {
-    protected static ?string $model = Testimonial::class;
+    protected static ?string $model = ContactMessage::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -26,22 +27,17 @@ class TestimonialResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('role')
+                Forms\Components\TextInput::make('last_name')
                     ->maxLength(255),
-                Forms\Components\Textarea::make('content')
+                Forms\Components\TextInput::make('email')
+                    ->email()
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Textarea::make('message')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\FileUpload::make('image')
-                    ->image()
-                    ->disk('public')
-                    ->directory('testimonials') 
-                    ->imageResizeMode('cover') 
-                    ->imageResizeTargetWidth('1080') // Redimensiona a 1080px de ancho máximo
-                    ->imageResizeTargetHeight('720')
-                    ->maxSize(2048) // Limita la subida a 2MB para que no suban fotos gigantes
-                    ->visibility('public')
-                    ->columnSpanFull(),
-                Forms\Components\DatePicker::make('date'),
+                Forms\Components\TextInput::make('is_read')
+                    ->required(),
             ]);
     }
 
@@ -51,12 +47,14 @@ class TestimonialResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('role')
+                Tables\Columns\TextColumn::make('last_name')
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\TextColumn::make('date')
-                    ->date()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->searchable(),
+                Tables\Columns\ToggleColumn::make('is_read')
+                    ->label('¿Leído?')
+                    ->onColor('success') // Se pone verde cuando está leído
+                    ->offColor('danger'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -70,7 +68,13 @@ class TestimonialResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('reply')
+                    ->label('Responder')
+                    ->icon('heroicon-o-envelope')
+                    ->url(fn (ContactMessage $record) => "mailto:{$record->email}?subject=Respuesta a su mensaje - Fundación Nuestra Esperanza")
+                    ->openUrlInNewTab(),    
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -89,9 +93,7 @@ class TestimonialResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTestimonials::route('/'),
-            'create' => Pages\CreateTestimonial::route('/create'),
-            'edit' => Pages\EditTestimonial::route('/{record}/edit'),
+            'index' => Pages\ListContactMessages::route('/'),
         ];
     }
 }
