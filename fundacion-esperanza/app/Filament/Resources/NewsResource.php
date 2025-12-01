@@ -30,7 +30,13 @@ class NewsResource extends Resource
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('image')
-                    ->image(),
+                    ->image()
+                    ->directory('news') 
+                    ->imageResizeMode('cover') 
+                    ->imageResizeTargetWidth('1080') // Redimensiona a 1080px de ancho máximo
+                    ->imageResizeTargetHeight('720')
+                    ->maxSize(2048) // Limita la subida a 2MB para que no suban fotos gigantes
+                    ->columnSpanFull(),
                 Forms\Components\DatePicker::make('publication_date')
                     ->required(),
             ]);
