@@ -11,7 +11,8 @@ const Programs = () => {
     {
       image: "/IMG/alojamiento.jpg",
       title: "Alojamiento",
-      description: "Nuestra fundación cuenta con una casita albergue denominada UTAJA que significa Mi Casa. La misma tiene una capacidad de 12 camas y está situada en la calle Francisco de Miranda 1856 (Miraflores) La Paz, Bolivia. ",
+      description: "Nuestra fundación ofrece una casita de albergue denominada UTAJA que significa Mi Casa. La misma tiene una capacidad de 11 dormitorios de dos o tres camas,  totalmente equipados con baños completos y calefacción.",
+      //  y está situada en la calle Francisco de Miranda 1856 (Miraflores) La Paz, Bolivia. ",
       color: "bg-celeste-fondo"
     },
     {
