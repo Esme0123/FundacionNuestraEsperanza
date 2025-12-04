@@ -1,0 +1,137 @@
+[
+  {
+    "id": 1,
+    "title": "Visita de Evaluación CCI",
+    "content": "A fines del mes de enero recibimos de visita de evaluación del CCI (Childhood Cancer International), quienes nos otorgaron el financiamiento para adquirir una casa propia. Recibimos a Alejandra Méndez, vice presidenta de CCI y Ellen Salvado, Administradora Global de CCI. Fue una visita productiva, una buena evaluación que nos dejó recomendaciones de mucho valor para continuar el proceso de la Fundación como institución.",
+    "image": "news/placeholder-visita-cci.jpg",
+    "publication_date": "30-01-2024",
+    "created_at": "2024-01-30 00:00:00",
+    "updated_at": "2024-01-30 00:00:00"
+  },
+  {
+    "id": 2,
+    "title": "Visita y Entrega Huevos de Pascua - Damas Diplomáticas",
+    "content": "Como cada año, las señoras de la Asociación de Damas Diplomática visitaron a los niños de la casita y le entregaron huevos de Pascua.",
+    "image": "news/placeholder-damas-pascua.jpg",
+    "publication_date": "01-03-2024",
+    "created_at": "2024-03-01 00:00:00",
+    "updated_at": "2024-03-01 00:00:00"
+  },
+  {
+    "id": 3,
+    "title": "Torneo de Golf 'Un Golpe de Esperanza'",
+    "content": "En el mes de abril se realizó el Torneo de Golf “Un Golpe de Esperanza” en instalaciones del La Paz Golf Club. Mucha participación de socios y la posibilidad de nuestras familias de visitar el hermoso club, y nuestros niños de tener clases de golf. Contamos con el generoso apoyo del señor Andrés Tedesqui, a cargo de todo la organización. El Torneo se hizo posible gracias a los auspicios de BAGÖ, PROESA y BIC Lines.",
+    "image": "news/placeholder-torneo-golf.jpg",
+    "publication_date": "05-04-2024",
+    "created_at": "2024-04-05 00:00:00",
+    "updated_at": "2024-04-05 00:00:00"
+  },
+  {
+    "id": 4,
+    "title": "Eco-Amigos Solidarios: Reciclaje de Aceite",
+    "content": "La empresa Greenside Solution realizó una campaña solidaria y elocógica, de recolección de aceite de cocina usado, el cual se reciclaba en eco-diesel. Por cada litro recaudado en distintos locales, edificio, colegios, etc, la Fundación Nuestra Esperanza recibiría 1 boliviano. El 14 de abril fue el cierre de la campaña y los organizadores de la campaña estuvieron en la casita celebrando el día del niño y entregando el monto recaudado.",
+    "image": "news/placeholder-eco-amigos.jpg",
+    "publication_date": "14-04-2024",
+    "created_at": "2024-04-14 00:00:00",
+    "updated_at": "2024-04-14 00:00:00"
+  },
+  {
+    "id": 5,
+    "title": "Una Lluvia de Esperanza (Desfile de Modas)",
+    "content": "El día 14 de mayo los estudiantes del colegio Calvert organizaron un desfile de modas de ropa hecha en Bolivia, donde desfilaron estudiantes y profesores. Una alegre actividad donde la totalidad del monto recaudado con la venta de entradas fue donado a la Fundación. El evento fue amenizado con el conjunto Top Secret. Fiesta total.",
+    "image": "news/placeholder-calvert-moda.jpg",
+    "publication_date": "14-05-2024",
+    "created_at": "2024-05-14 00:00:00",
+    "updated_at": "2024-05-14 00:00:00"
+  },
+  {
+    "id": 6,
+    "title": "Cimas de la Esperanza: Escalada del Huayna Potosí",
+    "content": "El mes de mayo contamos con la visita de Cimas de la Esperanza, un grupo de sobrevivientes franceses y mexicanos que demuestran que hay vida después del cáncer, escalando montañas. Segundo año consecutivo que vienen a Bolivia a escalar el nevado Huayna Potosí. Este año participó también un sobreviviente boliviano, que estuvo en nuestro albergue durante su tratamiento, Edilmer.",
+    "image": "news/placeholder-cimas-esperanza.jpg",
+    "publication_date": "25-05-2024",
+    "created_at": "2024-05-25 00:00:00",
+    "updated_at": "2024-05-25 00:00:00"
+  },
+  {
+    "id": 7,
+    "title": "Encuentro de Organizaciones de Ayuda a Niños con Cáncer (Cali)",
+    "content": "Del 10 al 14 de junio del 2025, se realizó en Cali, Colombia, el encuentro de Organizaciones de Ayuda a Niños con Cáncer. Nuestras representantes Marlene Dalence y Cecilia Quiroga tuvieron la oportunidad de asistir a diversos talleres y presentaciones y compartir con otras organizaciones latinoamericanas con la misma misión de apoyar a niños con cáncer y mejorar el porcentaje de sobrevida.",
+    "image": "news/placeholder-encuentro-cali.jpg",
+    "publication_date": "12-06-2025",
+    "created_at": "2025-06-12 00:00:00",
+    "updated_at": "2025-06-12 00:00:00"
+  },
+  {
+    "id": 8,
+    "title": "Tarde de Juegos en Salón Scally (Recaudación)",
+    "content": "La fundación Nuestra esperanza organizó una tarde je juegos el día 15 de julio en el salón Scally, como una de nuestras actividades de recaudación de fondos. Tuvimos la casa llena, hermosos premios para la rifa. Una exitosa actividad donde diversión y solidaridad se unieron para apoyar la sustentabilidad de nuestro albergue.",
+    "image": "news/placeholder-tarde-juegos.jpg",
+    "publication_date": "15-07-2024",
+    "created_at": "2024-07-15 00:00:00",
+    "updated_at": "2024-07-15 00:00:00"
+  },
+  {
+    "id": 9,
+    "title": "Carrera por una Vida 5K",
+    "content": "El domingo 3 de agosto en la zona de Achumani, se llevó a cabo nuestra “Carrera por una vida” 5K. Tuvimos un gran número de participantes, adultos, jóvenes, niños y hasta mascotas. Una mañana de deporte y solidaridad. Esta actividad fue posible gracias a BAGÓ. Crecer, Embol, La Sagrada Familia y el Gobierno Municipal de La Paz.",
+    "image": "news/placeholder-carrera-5k.jpg",
+    "publication_date": "03-08-2024",
+    "created_at": "2024-08-03 00:00:00",
+    "updated_at": "2024-08-03 00:00:00"
+  },
+  {
+    "id": 10,
+    "title": "Septiembre Dorado: Concientización del Cáncer Infantil",
+    "content": "El mes de septiembre, denominado “Septiembre Dorado” es, a nivel mundial, el mes de concientización del cáncer infantil. Como en otros años, el Gobierno Municipal de La Paz, prendió luces doradas al Palacio Consistorial y los puentes Trillizos.",
+    "image": "news/placeholder-septiembre-dorado.jpg",
+    "publication_date": "01-09-2024",
+    "created_at": "2024-09-01 00:00:00",
+    "updated_at": "2024-09-01 00:00:00"
+  },
+  {
+    "id": 11,
+    "title": "Visita Solidaria de Marko Bonifaz (Chef/Influencer)",
+    "content": "El día 23 de octubre tuvimos la grata visita de Marko Bonifaz, chef e influencer, quien trajo alegría a la casita, compartiendo un buen momento con nuestras familias.",
+    "image": "news/placeholder-marko-bonifaz.jpg",
+    "publication_date": "23-10-2024",
+    "created_at": "2024-10-23 00:00:00",
+    "updated_at": "2024-10-23 00:00:00"
+  },
+  {
+    "id": 12,
+    "title": "Día de Pijamas en Colegios (Septiembre Dorado)",
+    "content": "Conmemorando a “Septiembre Dorado”, diversos colegios de la zona se unieron al “Día de Pijamas”, un día regular de clases donde los estudiantes van vestidos de pijamas para sentir lo que es la vida de un niño enfermo mientras está en el hospital, vistiendo sólo pijamas. Los estudiantes dan una contribución, y así este día es de concientización y recaudación. Días antes del día programado en cada colegio, las voluntarias ofrecen una charla a los estudiantes. Este año, los colegios que participaron fueron: Alemán, Montessori, Saint Andrew's. De igual manera, el colegio la Salle tuvo una diferente actividad de concientización y recaudación. Estas actividades sensibilizan a jóvenes bolivianos.",
+    "image": "news/placeholder-dia-pijamas.jpg",
+    "publication_date": "15-09-2024",
+    "created_at": "2024-09-15 00:00:00",
+    "updated_at": "2024-09-15 00:00:00"
+  },
+  {
+    "id": 13,
+    "title": "Conferencia Anual CCI Global 2025 (Amsterdam)",
+    "content": "Del 20 al 23 de octubre se realizó en Amsterdam la XXXI Conferencia Global de Childood Cancer International. Nuestra voluntaria Cecilia Quiroga, fue invitada por Foundation S-My Child Matters, a dar una charla sobre el impacto en los padres de niños con cáncer, al tener un Hogar Lejos de Casa, como lo es nuestro albergue. Una conferencia con fundaciones de todo el mundo, compartiendo experiencias y conocimientos.",
+    "image": "news/placeholder-conferencia-cci.jpg",
+    "publication_date": "21-10-2025",
+    "created_at": "2025-10-21 00:00:00",
+    "updated_at": "2025-10-21 00:00:00"
+  },
+  {
+    "id": 14,
+    "title": "Campaña 'La Esperanza Comienza con Un Boliviano'",
+    "content": "El 14 y 15 de noviembre se llevó a cabo la campaña de recaudación “la esperanza comienza con 1 boliviano. Durante 48 horas a través de redes y mensajes , con apoyo de influencers y la empresa McCann, logramos nuestra meta de recaudación, la cual nos ayudará a continuar con todos los servicios que ofrecemos en la Fundación, tanto el albergue, alimentación, transporte y más.",
+    "image": "news/placeholder-campana-boliviano.jpg",
+    "publication_date": "15-11-2024",
+    "created_at": "2024-11-15 00:00:00",
+    "updated_at": "2024-11-15 00:00:00"
+  },
+  {
+    "id": 15,
+    "title": "VI Congreso Nacional de Cuidados Paliativos",
+    "content": "Nuestra oncopsicóloga y vicepresidente, Mary Rengel, participó del VI Congreso Nacional de Cuidados Paliativos que se realizó en la ciudad de Tarija, del 13 al 15 de noviembre con la temática de investigación con propósito en cuidados paliativos, buscando la aplicación de la ciencia y la empatía. Participaron profesionales, investigadores, estudiantes y voluntarios del área de cuidados paliativos.",
+    "image": "news/placeholder-congreso-paliativos.jpg",
+    "publication_date": "14-11-2024",
+    "created_at": "2024-11-14 00:00:00",
+    "updated_at": "2024-11-14 00:00:00"
+  }
+]

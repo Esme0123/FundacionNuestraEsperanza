@@ -1,62 +1,54 @@
 "use client";
-import React, { useState, useMemo } from 'react'; // Importar useState y useMemo
+import React, { useState, useMemo, useEffect } from 'react'; // Importar useState y useMemo
 import Image from 'next/image';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Alliances from '@/components/Alliances';
-
-// Definición de las tarjetas de programas (se mantiene igual)
-const allPrograms = [
-    {
-      image:"/IMG/Programs/DORMITORIOS.JPG", //camia imagen
-      title: "Albergue",
-      description: "Nuestra casita albergue 'UTAJA' (Mi Casa) ofrece un hogar seguro y cálido. Contamos con  11 dormitorios, totalmente equipados.",
-    },
-    {
-      image:"/IMG/almuerzo.png",
-      title: "Alimentación y Nutrición",
-      description: "Contamos con una amplia cocina donde una encargada prepara alimentos completos y balanceados para padres y niños. Los padres de  niños que tienen recomendaciones de nutrición especial, tienen la posibilidad de preparar su alimento en la casa.", 
-    },
-    {
-      image:"/IMG/alojamiento.jpg",
-      title: "Área de juegos y esparcimiento",
-      description: "Contamos con un espacio donde los niños pueden jugar, descansar , al igual que los padres, con mobiliario cómodo, televisión por cable, música, video juegos.",
-    },
-    {
-      image:"/IMG/Programs/PSICOLOGIA.jpg",
-      title: "Apoyo Psicológico",
-      description: "Disponemos de un gabinete de psicología y equipo de psicólogas para apoyar a niños y padres. También se realizan capacitaciones para las familias y voluntarias. El equipo apoya a familias, donde sea que se encuentren, durante la etapa de cuidados paliativos de los pacientes. ",
-    },
-    {
-      image:"/IMG/Programs/TransporteSeguro.jpg",
-      title: "Transporte Seguro",
-      description: "Para evitar contagios por utilizar medios de transporte masivo, otorgamos un servicio de taxi para ir y volver de hospitales, centro de radioterapia, estación de buses, etc.",
-    },
-    {
-      image:"/IMG/Programs/SOBREVIVIENTES BABY SHOWER.jpg",
-      title: "Sobrevivientes",
-      description: " La Fundación hace seguimiento a  sobrevivientes que durante su tratamiento estuvieron en la casita. Gestionamos becas universitarias, recientemente tuvimos Baby Shower para dos sobrevivientes que acaban de ser mamás. Se organizan encuentros de sobrevivientes a nivel local y nacional y también son miembros de asociaciones de sobrevivientes internacionales",
-    },
-    {
-      image:"/IMG/Programs/PROGRAMA CABELLOS 2.jpg",
-      title: "Cabello para todas",
-      description: "Recibimos donación de cabello y hacemos turbantes con cabellos, los cuales están a la venta. Con el dinero recaudado se paga la confección de los mismos y se regalan turbantes a las niñas de la casita.",
-    }
-];
+import { fetchPrograms } from '@/services/dataService';  // Importamos la función
 
 // --- Configuración de Paginación ---
 const CARDS_PER_PAGE = 5;
 
 const ProgramsPage = () => {
+    // AÑADIR ESTADOS DEL BACKEND
+    const [remotePrograms, setRemotePrograms] = useState<any[]>([]); // Almacena los datos del backend
+    const [loading, setLoading] = useState(true); // Indica si está cargando
+    // --- FIN DE ESTADOS DEL BACKEND ---
+    // ----------------------------------------------------------------------
+    // LÓGICA DE CONEXIÓN CON EL BACKEND (fetchPrograms)
+    // ----------------------------------------------------------------------
+    useEffect(() => {
+        const loadPrograms = async () => {
+            try {
+                setLoading(true);
+                // Llama a la función del servicio que usa axios
+                const data = await fetchPrograms(); 
+                setRemotePrograms(data);
+            } catch (error) {
+                console.error("Fallo al cargar programas desde la API:", error);
+                // Opcional: Mostrar un mensaje de error al usuario
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        loadPrograms();
+    }, []); // Se ejecuta solo una vez al montar el componente
+    // LÓGICA DE PAGINACIÓN (Ahora usando 'remotePrograms')
+    // ----------------------------------------------------------------------
+    const programsToDisplay = remotePrograms;
+
+
+
     // Estado para la página actual, inicia en 1
     const [currentPage, setCurrentPage] = useState(1);
     
-    const totalPages = Math.ceil(allPrograms.length / CARDS_PER_PAGE);
+    const totalPages = Math.ceil(programsToDisplay.length / CARDS_PER_PAGE);
     const startIndex = (currentPage - 1) * CARDS_PER_PAGE;
     const endIndex = startIndex + CARDS_PER_PAGE;
     const currentPrograms = useMemo(() => {
-        return allPrograms.slice(startIndex, endIndex);
-    }, [currentPage, allPrograms]); 
+        return programsToDisplay.slice(startIndex, endIndex);
+    }, [programsToDisplay, startIndex, endIndex]); 
 
     // Función para cambiar la página
     const goToPage = (page) => {
@@ -64,9 +56,36 @@ const ProgramsPage = () => {
             setCurrentPage(page);
         }
     };
-
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
+    // ----------------------------------------------------------------------
+    // MANEJO DE CARGA
+    // ----------------------------------------------------------------------
+    if (loading) {
+        return (
+            <main>
+                <Navbar />
+                <section className="py-16 md:py-20 bg-gray-50 text-center">
+                    <h2 className="text-3xl font-bold">Cargando Programas...</h2>
+                    <div className="flex justify-center mt-5"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-rosa-principal"></div></div>
+                </section>
+                <Footer />
+            </main>
+        );
+    }
+    
+    // Si no hay programas después de cargar
+    if (programsToDisplay.length === 0 && !loading) {
+        return (
+            <main>
+                <Navbar />
+                <section className="py-16 md:py-20 bg-gray-50 text-center">
+                    <h2 className="text-3xl font-bold text-red-500">Error: No se encontraron programas o la API falló.</h2>
+                    <p>Por favor, revisa la consola para ver errores o verifica si hay datos en el panel de administrador.</p>
+                </section>
+                <Footer />
+            </main>
+        );
+    }
 
     return (
         <main>
@@ -102,14 +121,17 @@ const ProgramsPage = () => {
                     {/* Grid de Programas (Mapea 'currentPrograms' en lugar de 'allPrograms') */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {currentPrograms.map((program, index) => (
-                            <div key={index} data-aos="fade-up" data-aos-delay={100 * index} className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col group">
+                            <div key={program.id} data-aos="fade-up" data-aos-delay={100 * index} className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col group">
                                 <div className="relative w-full h-56 overflow-hidden">
                                     <Image
-                                        src={program.image}
-                                        alt={`Imagen de ${program.title}`}
-                                        layout="fill"
-                                        objectFit="cover"
-                                        className="transition-transform duration-500 group-hover:scale-110"
+                                        // CAMBIAR: program.image ahora viene de la API
+                                    src={program.image || '/placeholder-image.jpg'} // Usa la URL completa de la API
+                                    alt={`Imagen de ${program.title}`}
+                                    layout="fill"
+                                    objectFit="cover"
+                                    className="transition-transform duration-500 group-hover:scale-110"
+                // AÑADIR: Esto es necesario cuando se usa src externo en Next.js
+                //unoptimized={true}
                                     />
                                 </div>
                                 <div className="p-6 flex flex-col flex-grow">

@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
   
   images: {
     unoptimized: true, // Necesario para 'next export'
+    // Añadir los dominios donde se alojan tus imágenes
+        domains: ['127.0.0.1', 'localhost'],
     remotePatterns: [
       {
         protocol: 'http',

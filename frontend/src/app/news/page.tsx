@@ -1,71 +1,135 @@
  "use client";
-
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Alliances from '@/components/Alliances';
 
-const allNews = [
-    {
-        category: "Eventos",
-        image: "/IMG/Events/aniversarioFundacion.jpg",
-        title: "VISITA EVALUCACIÓN  CCI. ",
-        date: "Enero, 2025",
-    },
-    {
-        category: "Salud",
-        image: "/IMG/Events/DAB79F60-1707-4ADB-908D-E238FF21E37F_4_5005_c.jpeg",
-        title: "Celebramos y Agradecemos en el Día del Médico",
-        date: "21 de Septiembre, 2025",
-    },
-    {
-        category: "Eventos",
-        image: "/IMG/Events/CimasDeLaEsperanza21-5-2025.jpg",
-        title: "Cimas de la Esperanza",
-        date: "05 de Agosto, 2025",
-    },
-    {
-        category: "Eventos",
-        image: "/IMG/Events/carreraPedestre.jpg",
-        title: "Éxito total en nuestra Carrera Solidaria 5K 🏃‍♀️🏃‍♂️💙",
-        date: "03 de Agosto, 2025",
-    },
-    {
-        category: "Eventos",
-        image: "/IMG/Events/rifaSolidaria.jpg",
-        title: "Exitosa rifa para recaudación de fondos",
-        date: "10 de Julio, 2025",
-    },
-    {
-        category: "Comunidad",
-        image: "/IMG/Events/Navidad0.jpg",
-        title: "Familias de la fundación celebran juntos la magia de la Navidad",
-        date: "25 de Diciembre, 2024",
-    }
-];
+import { fetchNews } from '@/services/dataService';
+// Definición de la interfaz (tal como se definió en el Paso 2)
+interface NewsItem {
+    id: number;
+    title: string;
+    description: string; 
+    image: string | null;
+    category: string;
+    date: string;
+}
+
+// const allNews = [
+//     {
+//         category: "Eventos",
+//         image: "/IMG/Events/aniversarioFundacion.jpg",
+//         title: "VISITA EVALUCACIÓN  CCI. ",
+//         date: "Enero, 2025",
+//     },
+//     {
+//         category: "Salud",
+//         image: "/IMG/Events/DAB79F60-1707-4ADB-908D-E238FF21E37F_4_5005_c.jpeg",
+//         title: "Celebramos y Agradecemos en el Día del Médico",
+//         date: "21 de Septiembre, 2025",
+//     },
+//     {
+//         category: "Eventos",
+//         image: "/IMG/Events/CimasDeLaEsperanza21-5-2025.jpg",
+//         title: "Cimas de la Esperanza",
+//         date: "05 de Agosto, 2025",
+//     },
+//     {
+//         category: "Eventos",
+//         image: "/IMG/Events/carreraPedestre.jpg",
+//         title: "Éxito total en nuestra Carrera Solidaria 5K 🏃‍♀️🏃‍♂️💙",
+//         date: "03 de Agosto, 2025",
+//     },
+//     {
+//         category: "Eventos",
+//         image: "/IMG/Events/rifaSolidaria.jpg",
+//         title: "Exitosa rifa para recaudación de fondos",
+//         date: "10 de Julio, 2025",
+//     },
+//     {
+//         category: "Comunidad",
+//         image: "/IMG/Events/Navidad0.jpg",
+//         title: "Familias de la fundación celebran juntos la magia de la Navidad",
+//         date: "25 de Diciembre, 2024",
+//     }
+// ];
 
 const NewsPage = () => {
+    // 2. NUEVOS ESTADOS para datos de la API y carga
+    const [allNews, setAllNews] = useState<NewsItem[]>([]); // Almacena TODAS las noticias del backend
+    const [loading, setLoading] = useState(true);
     const [activeCategory, setActiveCategory] = useState("Todos");
     const [filteredNews, setFilteredNews] = useState(allNews);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
     const categories = ["Todos", "Eventos", "Comunidad", "Salud", "Aniversarios", "Voluntariado"];
 
+    // ----------------------------------------------------------------------
+    // 3. Lógica de Carga de Datos (al inicio)
+    // ----------------------------------------------------------------------
     useEffect(() => {
-        if (activeCategory === "Todos") {
-            setFilteredNews(allNews);
-        } else {
-            const filtered = allNews.filter(news => news.category === activeCategory);
-            setFilteredNews(filtered);
+        const loadNews = async () => {
+            try {
+                setLoading(true);
+                const data = await fetchNews(); 
+                setAllNews(data); // Guarda todas las noticias
+                setFilteredNews(data); // Inicialmente, las filtradas son todas
+            } catch (error) {
+                console.error("Fallo al cargar noticias desde la API:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadNews();
+    }, []); // Se ejecuta solo una vez al montar
+    // 4. Lógica de Filtrado (Ahora usa 'allNews' del estado)
+    // ----------------------------------------------------------------------
+    useEffect(() => {
+        if (!loading) { // Solo filtrar si ya terminamos de cargar
+            if (activeCategory === "Todos") {
+                setFilteredNews(allNews);
+            } else {
+                // Filtrar del array COMPLETO (allNews)
+                const filtered = allNews.filter(news => news.category === activeCategory);
+                setFilteredNews(filtered);
+            }
+            setCurrentPage(1); // Reset page on category change
         }
-        setCurrentPage(1); // Reset page on category change
-    }, [activeCategory]);
+    }, [activeCategory, allNews, loading]);
 
     const lastItemIndex = currentPage * itemsPerPage;
     const firstItemIndex = lastItemIndex - itemsPerPage;
     const currentNews = filteredNews.slice(firstItemIndex, lastItemIndex);
     const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
+
+    // 5. MANEJO DE ESTADO DE CARGA y ERROR
+    // ----------------------------------------------------------------------
+    if (loading) {
+        return (
+            <main>
+                <Navbar />
+                <section className="py-16 md:py-20 bg-gray-50 text-center">
+                    <h2 className="text-3xl font-bold">Cargando Noticias...</h2>
+                    <div className="flex justify-center mt-5"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-rosa-principal"></div></div>
+                </section>
+                <Footer />
+            </main>
+        );
+    }
+    
+    if (allNews.length === 0 && !loading) {
+        return (
+            <main>
+                <Navbar />
+                <section className="py-16 md:py-20 bg-gray-50 text-center">
+                    <h2 className="text-3xl font-bold text-red-500">No se encontraron noticias.</h2>
+                    <p>Por favor, revisa la conexión con el API o si hay noticias creadas en el backend.</p>
+                </section>
+                <Footer />
+            </main>
+        );
+    }
 
     return (
         <main>
@@ -121,11 +185,13 @@ const NewsPage = () => {
                             <div key={index} data-aos="fade-up" data-aos-delay={100 * index} className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col group">
                                 <div className="relative w-full h-56 overflow-hidden">
                                     <Image
-                                        src={news.image}
-                                        alt={`Imagen de ${news.title}`}
-                                        layout="fill"
-                                        objectFit="cover"
-                                        className="transition-transform duration-500 group-hover:scale-110"
+                                        // 6. USAR URL COMPLETA DEL BACKEND
+                                src={news.image || '/placeholder-news.jpg'} 
+                                alt={`Imagen de ${news.title}`}
+                                layout="fill"
+                                objectFit="cover"
+                                className="transition-transform duration-500 group-hover:scale-110"
+                                unoptimized={true} //
                                     />
                                     <span className="absolute top-3 left-3 bg-rosa-principal text-white text-xs font-semibold px-3 py-1 rounded-full">{news.category}</span>
                                 </div>
