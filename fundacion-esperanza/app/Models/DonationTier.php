@@ -5,27 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Qr extends Model
+class DonationTier extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'campaign_id',
-        'code',
-        'url',
         'amount',
-        'status',
-        'bnb_blob',
-        'expiration_date',
+        'label',
+        'currency_id',
+        'is_active',
+        'order',
     ];
 
     protected $casts = [
-        'expiration_date' => 'datetime',
+        'is_active' => 'boolean',
         'amount' => 'decimal:2',
     ];
 
-    public function campaign()
+    public function currency()
     {
-        return $this->belongsTo(Campaign::class);
+        return $this->belongsTo(Currency::class);
     }
 }
