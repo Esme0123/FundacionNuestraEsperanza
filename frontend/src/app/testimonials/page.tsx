@@ -86,7 +86,7 @@ const Testimonials = () => {
             {/* Sección de Testimonios */}
             <section id="testimonios" className="bg-rosa-claro py-16 md:py-20">
                 <div className="container mx-auto px-6">
-                    <h2 data-aos="fade-up" className="text-3xl md:text-4xl font-bold text-black mb-2 text-center font-title">LO QUE DICEN DE NOSOTROS</h2>
+                    <h2 data-aos="fade-up" className="text-3xl md:text-4xl font-bold text-black mb-2 text-center font-title">LO QUE VIVIERON CON NOSOTROS</h2>
                     <div className="flex justify-center">
                         <div className="bg-rosa-principal w-20 h-2 mb-12"></div>
                     </div>

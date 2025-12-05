@@ -29,7 +29,12 @@ const Footer = () => {
                 src="/IMG/ic_instagram.png" alt='Instagram' width={30} height={30}
               /></a>
             </div>
-            <p className='mt-2 font-sans text-sm'>Escríbenos al: 70112236</p>
+            <p className="mt-2 font-sans text-sm">
+              Escríbenos al:<br/>
+            <span className="font-medium">+591 70112236</span> / <span className="font-medium">+591 74178164</span>
+            </p>
+
+            
             <p className='mt-2 font-sans text-sm'>fundacion.nuestraesperanza1@gmail.com</p>
           </div>
           <div>

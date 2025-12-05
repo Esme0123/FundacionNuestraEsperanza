@@ -1,4 +1,4 @@
--- --------------------------------------------------------
+fundacion-- --------------------------------------------------------
 -- Host:                         127.0.0.1
 -- Server Version:         8.4.3 - MySQL Community Server - GPL
 -- Server OS:              Win64
@@ -560,7 +560,7 @@ CREATE TABLE IF NOT EXISTS `roles` (
 -- Dumping data for table foundation.roles: ~5 rows (approx)
 INSERT INTO `roles` (`role_id`, `name`, `description`, `created_at`, `updated_at`) VALUES
 	(1, 'admin', 'Acceso total', '2025-10-18 07:43:57', '2025-10-18 07:43:57'),
-	(2, 'editor', 'CMS y campañas', '2025-10-18 07:43:58', '2025-10-18 07:43:58'),
+	(2, 'editor', 'CMS y campaÃ±as', '2025-10-18 07:43:58', '2025-10-18 07:43:58'),
 	(3, 'tesorero', 'Finanzas y donaciones', '2025-10-18 07:43:58', '2025-10-18 07:43:58'),
 	(4, 'viewer', 'Solo lectura', '2025-10-18 07:43:58', '2025-10-18 07:43:58'),
 	(5, 'donante', 'Usuario con capacidad de ver historial de donaciones y descargar certificados.', '2025-11-12 20:18:21', '2025-11-12 20:18:21');
@@ -617,7 +617,7 @@ CREATE TABLE IF NOT EXISTS `currency_types` (
 
 -- Dumping data for table foundation.currency_types: ~1 rows (approx)
 INSERT INTO `currency_types` (`currency_type_id`, `name`, `iso_code`, `symbol`) VALUES
-	(1, 'Dólar Estadounidense', 'USD', '$');
+	(1, 'DÃ³lar Estadounidense', 'USD', '$');
 
 -- Dumping structure for table foundation.users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -740,7 +740,7 @@ CREATE TABLE `vw_complete_volunteers` (
 
 -- Dropping temporary table and creating final VIEW structure
 DROP TABLE IF EXISTS `vw_complete_donations`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vw_complete_donations` AS select `d`.`donation_id` AS `donation_id`, `d`.`date` AS `date`, `c`.`name` AS `campaign`, (case when (`d`.`is_anonymous` = 1) then 'Anónimo' else concat_ws(' ',`dn`.`name`,`dn`.`last_name`) end) AS `donor`, `dn`.`email` AS `email`, `d`.`amount` AS `amount`, `d`.`status` AS `status`, `d`.`provider` AS `provider`, `d`.`is_recurring` AS `is_recurring`, `d`.`is_anonymous` AS `is_anonymous`, `tm`.`symbol` AS `currency_symbol`, `tm`.`name` AS `currency_name`, `d`.`fee` AS `fee`, `d`.`net_amount` AS `net_amount`, (case when ((`d`.`status` = 'succeeded') and (`d`.`is_anonymous` = 0)) then 'si' else 'no' end) AS `certifiable` from (((`donations` `d` left join `donors` `dn` on((`dn`.`donor_id` = `d`.`donor_id`))) left join `campaigns` `c` on((`c`.`campaign_id` = `d`.`campaign_id`))) left join `currency_types` `tm` on((`tm`.`currency_type_id` = `d`.`currency_type_id`)));
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vw_complete_donations` AS select `d`.`donation_id` AS `donation_id`, `d`.`date` AS `date`, `c`.`name` AS `campaign`, (case when (`d`.`is_anonymous` = 1) then 'AnÃ³nimo' else concat_ws(' ',`dn`.`name`,`dn`.`last_name`) end) AS `donor`, `dn`.`email` AS `email`, `d`.`amount` AS `amount`, `d`.`status` AS `status`, `d`.`provider` AS `provider`, `d`.`is_recurring` AS `is_recurring`, `d`.`is_anonymous` AS `is_anonymous`, `tm`.`symbol` AS `currency_symbol`, `tm`.`name` AS `currency_name`, `d`.`fee` AS `fee`, `d`.`net_amount` AS `net_amount`, (case when ((`d`.`status` = 'succeeded') and (`d`.`is_anonymous` = 0)) then 'si' else 'no' end) AS `certifiable` from (((`donations` `d` left join `donors` `dn` on((`dn`.`donor_id` = `d`.`donor_id`))) left join `campaigns` `c` on((`c`.`campaign_id` = `d`.`campaign_id`))) left join `currency_types` `tm` on((`tm`.`currency_type_id` = `d`.`currency_type_id`)));
 
 -- Dropping temporary table and creating final VIEW structure
 DROP TABLE IF EXISTS `vw_daily_summary`;
