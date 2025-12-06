@@ -99,10 +99,18 @@ Route::get('/news', function () {
 Route::get('/testimonials', function () {
     return Testimonial::latest()->get()->map(function ($testimonial) {
         return [
+            // 'id' => $testimonial->id,
+            // 'name' => $testimonial->name,
+            // 'role' => $testimonial->role,
+            // 'message' => $testimonial->content, 
+            // 'image' => $testimonial->image ? asset('storage/' . $testimonial->image) : null,
             'id' => $testimonial->id,
             'name' => $testimonial->name,
-            'role' => $testimonial->role,
-            'message' => $testimonial->content, 
+            'quote' => $testimonial->content, 
+            'type' => $testimonial->type ?? 'image', 
+            'embedUrl' => $testimonial->embed_url ?? null,
+            'externalLink' => $testimonial->external_link ?? '#',
+            'age' => $testimonial->age ?? '',
             'image' => $testimonial->image ? asset('storage/' . $testimonial->image) : null,
         ];
     });
