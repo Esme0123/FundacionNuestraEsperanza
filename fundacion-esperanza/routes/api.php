@@ -106,7 +106,7 @@ Route::get('/testimonials', function () {
             // 'image' => $testimonial->image ? asset('storage/' . $testimonial->image) : null,
             'id' => $testimonial->id,
             'name' => $testimonial->name,
-            'quote' => $testimonial->content, 
+            'content' => $testimonial->content, 
             'type' => $testimonial->type ?? 'image', 
             'embedUrl' => $testimonial->embed_url ?? null,
             'externalLink' => $testimonial->external_link ?? '#',
