@@ -1,10 +1,9 @@
 <?php
 
 namespace Database\Seeders;
-use Illuminate\\Support\\Facades\\File;
-use Illuminate\\Support\\Facades\\Storage;
+
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\File; // Importante para manejar archivos
 use App\Models\Testimonial;
 use App\Models\Program;
 use App\Models\News;
@@ -18,7 +17,6 @@ class DataImportSeeder extends Seeder
      */
     public function run()
     {
-        // La ruta base donde se espera encontrar los archivos JSON
         $basePath = base_path();
 
         try {
@@ -31,7 +29,7 @@ class DataImportSeeder extends Seeder
             // Importación de Noticias
             $this->importData('news_backup.json', News::class, $basePath);
 
-            $this->command->info('✅ ¡Todos los datos han sido importados exitosamente!');
+            $this->command->info('✅ ¡Todos los datos e imágenes han sido importados exitosamente!');
 
         } catch (\Exception $e) {
             $this->command->error('❌ Ocurrió un error grave durante la importación: ' . $e->getMessage());
@@ -39,19 +37,20 @@ class DataImportSeeder extends Seeder
     }
 
     /**
-     * Función privada para manejar la lógica de importación.
+     * Función privada para importar datos y copiar imágenes.
      */
     private function importData(string $filename, string $modelClass, string $basePath)
     {
         $filePath = $basePath . '/' . $filename;
         $modelName = class_basename($modelClass);
 
+        // 1. Verificar si existe el archivo JSON
         if (!File::exists($filePath)) {
             $this->command->warn("⚠️  ADVERTENCIA: Archivo {$filename} NO encontrado. Saltando la importación de {$modelName}.");
             return;
         }
 
-        $this->command->info("🔄 Importando datos de {$modelName} desde {$filename}...");
+        $this->command->info("🔄 Procesando {$modelName}...");
         
         $jsonContent = File::get($filePath);
         $data = json_decode($jsonContent, true);
@@ -61,36 +60,41 @@ class DataImportSeeder extends Seeder
             return;
         }
         
-        // Limpia la tabla y reinserta los datos
+        // 2. Limpiar la tabla antes de insertar
         $modelClass::truncate(); 
         $importedCount = 0;
 
         foreach ($data as $item) {
-            unset($item['id']);
-            
-            if (isset($item['image']) && !empty($item['image'])) {
-                // Origen: La carpeta donde guardaron las fotos base
-                $sourcePath = database_path('seeders/images/' . basename($item['image']));
-                
-                // Destino: La carpeta pública donde Laravel las busca
-                // Ejemplo: storage/app/public/programs/foto.jpg
-                $destinationPath = storage_path('app/public/' . $item['image']);
-                
-                // Creamos la carpeta destino si no existe
-                $directory = dirname($destinationPath);
-                if (!File::exists($directory)) {
-                    File::makeDirectory($directory, 0755, true);
-                }
+            unset($item['id']); // Dejar que la BD asigne el ID
 
-                // Copiamos el archivo FÍSICAMENTE
+            // --- LÓGICA DE COPIA DE IMÁGENES ---
+            if (isset($item['image']) && !empty($item['image'])) {
+                // Ruta Fuente: database/seeders/images/testimonials/foto.png
+                $sourcePath = database_path('seeders/images/' . $item['image']);
+                
+                // Ruta Destino: storage/app/public/testimonials/foto.png
+                $destPath = storage_path('app/public/' . $item['image']);
+
+                // Verificamos si tenemos la imagen original
                 if (File::exists($sourcePath)) {
-                    File::copy($sourcePath, $destinationPath);
+                    // Asegurar que la carpeta destino exista (ej. storage/app/public/testimonials)
+                    $destDir = dirname($destPath);
+                    if (!File::exists($destDir)) {
+                        File::makeDirectory($destDir, 0755, true);
+                    }
+
+                    // Copiar el archivo
+                    File::copy($sourcePath, $destPath);
+                    $this->command->info("   📸 Imagen copiada: {$item['image']}");
+                } else {
+                    $this->command->warn("   ⚠️ Imagen no encontrada en seeders: {$item['image']}");
                 }
             }
+            // -----------------------------------
 
             $modelClass::create($item);
             $importedCount++;
         }
-        $this->command->info("   -> Éxito: {$importedCount} registros de {$modelName} importados.");
+        $this->command->info("   -> Éxito: {$importedCount} registros de {$modelName} creados.");
     }
 }
