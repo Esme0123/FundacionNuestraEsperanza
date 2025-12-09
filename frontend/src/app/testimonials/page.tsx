@@ -15,6 +15,9 @@ interface TestimonialItem {
     message: string;
     image: string | null;
 }
+// 2. Número de la fundación 
+  const phoneNumber = "59170112236"; 
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=Hola,%20quisiera%20ser%20voluntario%20de%20la%20fundación.`;
 
 export default function TestimonialsPage() {
     const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
@@ -141,9 +144,14 @@ export default function TestimonialsPage() {
                         <p className="mb-8 font-sans max-w-2xl mx-auto">
                             Si has sido parte de nuestra fundación, nos encantaría conocer tu experiencia.
                         </p>
-                        <a href="/contacto" className="bg-rosa-principal text-white px-8 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
+                        <a 
+                            href={whatsappUrl}
+                            target="_blank"
+                            rel="noopener noreferrer" 
+                            className="inline-block bg-white text-azul-marino px-6 py-2 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button"
+                            >
                             CONTÁCTANOS
-                        </a>
+                            </a>     
                     </div>
 
                 </div>
