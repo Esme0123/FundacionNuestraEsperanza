@@ -4,9 +4,50 @@
     "name": "Ana Baptista",
     "role": "Sobreviviente",
     "content": "Ana es sobreviviente de leucemia linfoblástica aguda tipo B, un cáncer en la sangre que enfrentó desde los 12 años. Durante su tratamiento vivió síntomas severos, largos periodos de sueño profundo y múltiples hospitalizaciones. Recibió quimioterapias, incluso en pastillas, y debió seguir estrictas indicaciones médicas y restricciones alimentarias. En la fundación que la acompañó encontró un verdadero segundo hogar: un espacio donde convivió con otros jóvenes sobrevivientes, participó en actividades, recibió apoyo y construyó una comunidad que se convirtió en parte esencial de su proceso de recuperación. Ahora, Ana tiene 23 años de edad y es licenciada en Psicología.",
-    "image": "testimonials/01KBKGQSFJH2H3DHBJ8ZE67ZNN.png",
+    "image": "testimonials/testimonioANA.png",
     "date": "2024-03-06",
     "created_at": "2025-12-04 01:46:48",
     "updated_at": "2025-12-04 01:48:28"
+  }, 
+  {
+    "id": 2,
+    "name": "Don Vicente",
+    "role": "Padre de una niña",
+    "content": null,
+    "image": "testimonials/testDonVicente.png",
+    "date": "2025-01-29",
+    "created_at": "2025-12-09 01:46:48",
+    "updated_at": "2025-12-09 01:48:28"
+  },
+  {
+    "id": 3,
+    "name": "Señora Maria Elena",
+    "role": "Madre de un beneficiario",
+    "content": null,
+    "image": "testimonials/testMaElena.png",
+    "date": "2025-01-29",
+    "created_at": "2025-12-09 01:46:48",
+    "updated_at": "2025-12-09 01:48:28"
+  },
+  {
+    "id": 4,
+    "name": "Señor Rosario",
+    "role": "Madre de un beneficiario",
+    "content": null,
+    "image": "testimonials/testRosario.png",
+    "date": "2025-01-29",
+    "created_at": "2025-12-09 01:46:48",
+    "updated_at": "2025-12-09 01:48:28"
+  },
+  {
+    "id": 5,
+    "name": "Brenda",
+    "role": "Sobreviviente",
+    "content": "Hoy celebramos la valentía y la fuerza de Brenda, una verdadera guerrera que tocó la campana y venció al cáncer. Su sonrisa es ahora símbolo de esperanza, su historia una inspiración para todos.¡Gracias, Brenda, por enseñarnos que con amor, fe y coraje, todo es posible! 💛🎗️",
+    "image": "testimonials/testBrenda.png",
+    "date": "2025-08-14",
+    "created_at": "2025-12-09 01:46:48",
+    "updated_at": "2025-12-09 01:48:28"
   }
+
 ]
