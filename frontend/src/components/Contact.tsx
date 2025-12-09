@@ -1,53 +1,103 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, Variants } from 'framer-motion';
 
 const Contact = () => {
-  const formVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
+  const [formData, setFormData] = useState({
+    name: '',
+    last_name: '',
+    email: '',
+    message: ''
+  });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const API_URL = 'http://127.0.0.1:8000/api';
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('loading');
+
+    try {
+      const response = await fetch(`${API_URL}/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        setFormData({ name: '', last_name: '', email: '', message: '' });
+      } else {
+        setStatus('error');
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus('error');
+    }
+  };
+
+  // Variantes de animación (Tus originales)
   const fieldVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
+
   return (
     <section id="contacto" className="bg-verde-lima-claro py-16">
-      <div className="container mx-auto px-6 text-center ">
-        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.8 }} className="text-3xl md:text-4xl font-bold text-black mb-4 font-title ">CONTACTO</motion.h2>
-        <div className="flex justify-center">
-          <div className="bg-rosa-principal w-20 h-2 mb-5"></div>
-        </div>
-        <p className="text-black font-sans max-w-2xl mx-auto mb-8">
-          ¿Tienes alguna pregunta o quieres saber más sobre cómo puedes ayudar? ¡Nos encantaría saber de ti!
-        </p>
-        <motion.form
-          variants={formVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.2 }}
-          className="max-w-xl mx-auto border-black border-2 bg-white p-6 md:p-8"
+      <div className="container mx-auto px-6 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-black mb-4 font-title">CONTACTO</h2>
+        <div className="flex justify-center mb-8"><div className="bg-rosa-principal w-20 h-2"></div></div>
+        
+        <motion.form 
+            onSubmit={handleSubmit}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg"
         >
-          <motion.div variants={fieldVariants} className="mb-4 text-left">
-            <label htmlFor="nombre" className='font-sans font-bold'>Nombre</label>
-            <input id="nombre" type="text" placeholder="Tu Nombre" className="w-full p-3 rounded-md border border-gray-300 bg-gray-200 mt-2" />
-          </motion.div>
-          <motion.div variants={fieldVariants} className="mb-4 text-left">
-            <label htmlFor="apellido" className='font-sans font-bold'>Apellido</label>
-            <input id="apellido" type='text' placeholder='Tu Apellido' className='w-full p-3 rounded-md border border-gray-300 bg-gray-200 mt-2' />
-          </motion.div>
-          <motion.div variants={fieldVariants} className="mb-4 text-left">
-            <label htmlFor="email" className='font-sans font-bold'>Correo Electrónico</label>
-            <input id="email" type="email" placeholder="Tu Correo Electrónico" className="w-full p-3 rounded-md border border-gray-300 bg-gray-200 mt-2" />
-          </motion.div>
-          <motion.div variants={fieldVariants} className="mb-4 text-left">
-            <label htmlFor="mensaje" className='font-sans font-bold'>Mensaje</label>
-            <textarea id="mensaje" placeholder="Tu Mensaje" rows={5} className="w-full p-3 rounded-md border border-gray-300 bg-gray-200 mt-2"></textarea>
-          </motion.div>
-          <motion.button variants={fieldVariants} className="bg-turquesa-secundario hover:bg-blue-200 text-azul-marino px-8 py-3 rounded-full font-bold hover:bg-opacity-90 transition duration-300 font-button">
-            ENVIAR MENSAJE
-          </motion.button>
+          {status === 'success' ? (
+              <div className="text-green-600 py-10">
+                  <h3 className="text-2xl font-bold">¡Mensaje Enviado!</h3>
+                  <p>Nos pondremos en contacto pronto.</p>
+                  <button onClick={() => setStatus('idle')} className="mt-4 text-sm underline">Enviar otro</button>
+              </div>
+          ) : (
+            <>
+              <div className="grid md:grid-cols-2 gap-4">
+                  <motion.div variants={fieldVariants} className="mb-4 text-left">
+                    <label htmlFor="name" className='font-bold text-sm'>Nombre</label>
+                    <input id="name" type='text' value={formData.name} onChange={handleChange} required className='w-full p-3 rounded border bg-gray-50' />
+                  </motion.div>
+                  <motion.div variants={fieldVariants} className="mb-4 text-left">
+                    <label htmlFor="last_name" className='font-bold text-sm'>Apellido</label>
+                    <input id="last_name" type='text' value={formData.last_name} onChange={handleChange} className='w-full p-3 rounded border bg-gray-50' />
+                  </motion.div>
+              </div>
+
+              <motion.div variants={fieldVariants} className="mb-4 text-left">
+                <label htmlFor="email" className='font-bold text-sm'>Correo</label>
+                <input id="email" type="email" value={formData.email} onChange={handleChange} required className="w-full p-3 rounded border bg-gray-50" />
+              </motion.div>
+              
+              <motion.div variants={fieldVariants} className="mb-4 text-left">
+                <label htmlFor="message" className='font-bold text-sm'>Mensaje</label>
+                <textarea id="message" rows={4} value={formData.message} onChange={handleChange} required className="w-full p-3 rounded border bg-gray-50"></textarea>
+              </motion.div>
+
+              <button 
+                disabled={status === 'loading'}
+                className="bg-turquesa-secundario text-white px-8 py-3 rounded-full font-bold w-full hover:bg-blue-600 transition disabled:opacity-50"
+              >
+                {status === 'loading' ? 'ENVIANDO...' : 'ENVIAR MENSAJE'}
+              </button>
+              
+              {status === 'error' && <p className="text-red-500 mt-2">Error al enviar. Intenta de nuevo.</p>}
+            </>
+          )}
         </motion.form>
       </div>
     </section>
