@@ -17,6 +17,7 @@ class Donor extends Model
         'last_name',
         'email',
         'phone',
+        'identity_document',
         'country',
         'city',
         'marketing_opt_in',

@@ -69,7 +69,27 @@ export default function LoginPage() {
 
       if (responseData && responseData.user && responseData.token) {
         login(responseData.user, responseData.token); // Usamos la función del AuthContext
-        router.push('/perfil'); // Redirigimos al perfil del usuario
+        
+        // Check for redirect param
+        // Note: For client component we can use window.location or searchParams if we wrap in Suspense. Only checking query manually here might be tricky if not using useSearchParams.
+        // Let's rely on checking URL directly if necessary or use window.location.search
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirect = urlParams.get('redirect');
+        
+        if (redirect === 'back') {
+             router.back(); // If logic was purely history based
+             // But usually we might want to go to a specific page.
+             // If we saved state in localStorage, 'back' (meaning reloading the page that sent us here) is usually okay IF that page reads localStorage.
+             // But router.back() might not reload.
+             // Let's assume the user came from /programas. 
+             // Ideally we should pass the full path.
+             // But for now, let's just go back.
+             router.back();
+        } else if (redirect) {
+            router.push(redirect);
+        } else {
+            router.push('/perfil'); // Redirigimos al perfil del usuario
+        }
       } else {
         console.error('Estructura de respuesta inesperada:', data);
         setError('Respuesta inesperada del servidor.');

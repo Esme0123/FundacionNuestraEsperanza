@@ -2,12 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Si estás exportando estáticamente (para Hostinger compartido):
-  output: 'export', 
-  
+  output: 'export',
+
   images: {
     unoptimized: true, // Necesario para 'next export'
     // Añadir los dominios donde se alojan tus imágenes
-        domains: ['127.0.0.1', 'localhost'],
+    domains: ['127.0.0.1', 'localhost'],
     remotePatterns: [
       {
         protocol: 'http',
@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: 'localhost', // Por si acaso
         port: '8000',
+        pathname: '/storage/**', // Ruta de almacenamiento
       },
       // Cuando subas a Hostinger, agrega aquí tu dominio real:
       // { protocol: 'https', hostname: 'tufundacion.org', ... }

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DonationModal from "@/components/DonationModal";
+import DonationForm from "@/components/DonationForm";
 import Alliances from "@/components/Alliances";
 import HowToHelp from '@/components/HowToHelp';
 
@@ -124,25 +125,38 @@ const HelpPage = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="flex justify-center space-x-6"
             >
-                <a href="https://www.facebook.com/NuestraEsperanzaBo/?locale=es_LA" className="text-4xl hover:scale-125 transition-transform">
-                    <Image
-                    src="/IMG/ic_facebook.png" alt='Facebook' width={50} height={50}
+              <a href="https://www.facebook.com/NuestraEsperanzaBo/?locale=es_LA" className="text-4xl hover:scale-125 transition-transform">
+                <Image
+                  src="/IMG/ic_facebook.png" alt='Facebook' width={50} height={50}
                 /></a>
-                <a href="https://www.tiktok.com/@fund.nuestra.esperanza?_t=ZM-90VE1jzCdp5&_r=1 " className='text-4xl hover:scale-125 transition-transform'>
-                    <Image
-                    src="/IMG/ic_tiktok.png" alt='TikTok' width={50} height={50}
+              <a href="https://www.tiktok.com/@fund.nuestra.esperanza?_t=ZM-90VE1jzCdp5&_r=1 " className='text-4xl hover:scale-125 transition-transform'>
+                <Image
+                  src="/IMG/ic_tiktok.png" alt='TikTok' width={50} height={50}
                 /></a>
-                <a href="https://www.instagram.com/fundacionnuestraesperanza/?hl=es-la" className='text-4xl hover:scale-125 transition-transform'>
-                    <Image
-                    src="/IMG/ic_instagram.png" alt='Instagram' width={50} height={50}
+              <a href="https://www.instagram.com/fundacionnuestraesperanza/?hl=es-la" className='text-4xl hover:scale-125 transition-transform'>
+                <Image
+                  src="/IMG/ic_instagram.png" alt='Instagram' width={50} height={50}
                 /></a>
             </motion.div>
           </div>
         </section>
+
+        {/* SECTION: BNB Donation Form for Demo */}
+        <section className="bg-gray-50 py-16 text-center">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-azul-marino mb-8 font-title">
+              Haz una Donación con QR (BNB)
+            </h2>
+            <div className="flex justify-center">
+              <DonationForm />
+            </div>
+          </div>
+        </section>
+
         <Alliances />
         <Footer />
       </main>
-      
+
       <DonationModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
     </>
   );

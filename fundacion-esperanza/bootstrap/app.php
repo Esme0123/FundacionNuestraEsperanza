@@ -39,6 +39,11 @@ return Application::configure(basePath: dirname(__DIR__))
             //'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
             'role' => \App\Http\Middleware\EnsureRole::class,
         ]);
+
+        $middleware->validateCsrfTokens(except: [
+            '/api/public/*',
+            '/api/webhooks/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // Configuración de manejo de excepciones.
