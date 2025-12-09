@@ -24,20 +24,20 @@ const directorio = [
 ];
 
 const voluntarias = [
-  { name: 'Marlene Dalence', image: '/IMG/equipo/voluntarias/marlene.jpg' },
-  { name: 'Dolly Nanda', image: '/IMG/equipo/voluntarias/dolly.jpg' },
-  { name: 'Rosmery', image: '/IMG/equipo/voluntarias/rosmery.jpg' },
-  { name: 'Carola', image: '/IMG/equipo/voluntarias/carola.jpg' },
-  { name: 'Diva', image: '/IMG/equipo/voluntarias/diva.jpg' },
-  { name: 'Gaby', image: '/IMG/equipo/voluntarias/gaby.jpg' },
-  { name: 'Ma. Rene', image: '/IMG/equipo/voluntarias/maRene.jpg' },
-  { name: 'Mercedes', image: '/IMG/equipo/voluntarias/mercedes.jpg' },
-  { name: 'Rosario', image: '/IMG/equipo/voluntarias/rosario.jpg' },
-  { name: 'Sandra', image: '/IMG/equipo/voluntarias/sandra.jpg' },
-  { name: 'Susana', image: '/IMG/equipo/voluntarias/susana.jpg' },
-  { name: 'Verónica', image: '/IMG/equipo/voluntarias/veronica.jpg' },
-  { name: 'Ximena', image: '/IMG/equipo/voluntarias/ximena.jpg' },
-  { name: 'Yola', image: '/IMG/equipo/voluntarias/yola.jpg' },
+  { name: 'Marlene Dalence', image: 'https://ui-avatars.com/api/?name=Marlene+Dalence&background=random&size=200' },
+  { name: 'Dolly Nanda', image: 'https://ui-avatars.com/api/?name=Dolly+Nanda&background=random&size=200' },
+  { name: 'Rosmery', image: 'https://ui-avatars.com/api/?name=Rosmery&background=random&size=200' },
+  { name: 'Carola', image: 'https://ui-avatars.com/api/?name=Carola&background=random&size=200' },
+  { name: 'Diva', image: 'https://ui-avatars.com/api/?name=Diva&background=random&size=200' },
+  { name: 'Gaby', image: 'https://ui-avatars.com/api/?name=Gaby&background=random&size=200' },
+  { name: 'Ma. Rene', image: 'https://ui-avatars.com/api/?name=Ma+Rene&background=random&size=200' },
+  { name: 'Mercedes', image: 'https://ui-avatars.com/api/?name=Mercedes&background=random&size=200' },
+  { name: 'Rosario', image: 'https://ui-avatars.com/api/?name=Rosario&background=random&size=200' },
+  { name: 'Sandra', image: 'https://ui-avatars.com/api/?name=Sandra&background=random&size=200' },
+  { name: 'Susana', image: 'https://ui-avatars.com/api/?name=Susana&background=random&size=200' },
+  { name: 'Verónica', image: 'https://ui-avatars.com/api/?name=Veronica&background=random&size=200' },
+  { name: 'Ximena', image: 'https://ui-avatars.com/api/?name=Ximena&background=random&size=200' },
+  { name: 'Yola', image: 'https://ui-avatars.com/api/?name=Yola&background=random&size=200' },
 ];
 
 export default function AboutPage() {

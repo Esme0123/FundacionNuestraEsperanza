@@ -3,6 +3,24 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
+// --- 1. CONFIGURACIÓN DE URL DEL BACKEND (Igual que en Programs) ---
+// Define aquí la dirección de tu backend Laravel.
+const LARAVEL_BASE_URL = 'http://127.0.0.1:8000'; 
+
+// --- 2. FUNCIÓN HELPER PARA IMÁGENES (Igual que en Programs) ---
+const getImageUrl = (imagePath: string | null) => {
+    if (!imagePath) return '/placeholder-image.jpg'; // Imagen por defecto si es null
+
+    // Si la ruta ya es una URL completa (ej: http://...), la devolvemos tal cual
+    if (imagePath.startsWith('http')) {
+        return imagePath;
+    }
+
+    // Si la ruta es relativa (ej: "testimonials/foto.jpg"), le añadimos el dominio
+    return `${LARAVEL_BASE_URL}/storage/${imagePath}`;
+};
+
+// Interfaz alineada con tu API y BD
 interface TestimonialItem {
   id: number;
   name: string;
@@ -11,133 +29,149 @@ interface TestimonialItem {
   image: string | null;
 }
 
+// Interfaz para la respuesta cruda de la API (opcional, pero buena práctica)
 interface ApiTestimonialItem {
   id: number;
   name: string;
   role?: string | null;
   message?: string;
-  content?: string;
+  content?: string; // Por si el backend manda 'content' en vez de 'message'
   image?: string | null;
+  quote?: string;   // Por si el backend manda 'quote'
 }
 
-const Testimonials = () => {
+const TestimonialsSection = () => {
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // URL del Backend
+  // Efecto para cargar los datos del API
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/testimonials`);
+        // Usamos la constante o una variable de entorno para la API
+        const response = await fetch(`${LARAVEL_BASE_URL}/api/testimonials`);
+        if (!response.ok) {
+            throw new Error(`Error en la respuesta de la API: ${response.status}`);
+        }
         const data = await response.json();
-        // Mapeamos los datos de la API y tomamos solo los 3 últimos
+        
+        // Mapeamos los datos para asegurar que coincidan con nuestra interfaz
+        // Tomamos los primeros 3 para la Home
         const normalizedData = data.slice(0, 3).map((item: ApiTestimonialItem) => ({
           id: item.id,
           name: item.name,
           role: item.role || 'Beneficiario',
-          message: item.message || item.content, // Soporte por si el backend manda content
-          image: item.image
+          // Buscamos el contenido en varios campos posibles para ser robustos
+          message: item.message || item.quote || item.content || 'Sin testimonio disponible.',
+          image: item.image 
         }));
+        
         setTestimonials(normalizedData);
-      } catch (error) {
-        console.error("Error cargando testimonios:", error);
-      } finally {
         setLoading(false);
+        
+      } catch (error) {
+        console.error("Fallo al cargar testimonios desde la API:", error);
+        setLoading(false); 
       }
     };
-
     fetchTestimonials();
   }, []);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.3 }
-    }
-  };
-
-  const itemVariants = {
+  const cardVariants = {
     hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0 }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
   };
 
+  // --- MANEJO DE CARGA Y ERROR ---
+  if (loading) {
+    return (
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6 text-center">
+            <h2 className="text-3xl font-bold text-black mb-10 font-title">TESTIMONIOS</h2>
+            <div className="flex justify-center mt-5">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-rosa-principal"></div>
+            </div>
+            <p className="mt-4 text-gray-600">Cargando testimonios...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (testimonials.length === 0) {
+    // Si no hay datos, no mostramos la sección o mostramos un mensaje vacío
+    // Para la Home, a veces es mejor ocultar la sección si falla.
+    // Aquí mostramos un mensaje de error para depuración.
+    return (
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="text-3xl font-bold text-black mb-10 font-title">TESTIMONIOS</h2>
+          <p className="text-red-500">No hay testimonios disponibles en este momento.</p>
+        </div>
+      </section>
+    );
+  }
+
+  // --- RENDERIZADO ---
   return (
-    <section className="bg-celeste-claro py-16">
+    <section className="py-16 md:py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-3xl md:text-4xl font-bold text-black mb-4 font-title"
-          >
-            TESTIMONIOS
-          </motion.h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-black mb-2 font-title"> TESTIMONIOS </h2>
           <div className="flex justify-center">
             <div className="bg-rosa-principal w-20 h-2"></div>
           </div>
         </div>
-
-        {loading ? (
-             <div className="text-center text-gray-500">Cargando testimonios...</div>
-        ) : testimonials.length === 0 ? (
-             <div className="text-center text-gray-500">Pronto compartiremos nuevas historias.</div>
-        ) : (
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
+        
+        <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+        >
+          {testimonials.map((testimonial) => (
+            <motion.div 
+              key={testimonial.id} 
+              className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col items-center p-6 border-t-4 border-turquesa-secundario transition-shadow duration-300 hover:shadow-xl"
+              variants={cardVariants}
             >
-              {testimonials.map((testimonial) => (
-                <motion.div
-                  key={testimonial.id}
-                  className="bg-white rounded-lg shadow-lg overflow-hidden group flex flex-col h-full"
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.05, y: -10, boxShadow: "0px 20px 30px rgba(0,0,0,0.1)" }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {/* Imagen Grande Rectangular (Como el diseño original) */}
-                  <div className="relative w-full h-64 bg-gray-200">
-                    {testimonial.image ? (
-                        <Image 
-                            src={testimonial.image} 
-                            alt={testimonial.name} 
-                            fill 
-                            className="object-cover" 
-                        />
-                    ) : (
-                        <div className="flex items-center justify-center h-full text-gray-400 font-bold text-4xl bg-gray-300">
-                            {testimonial.name.charAt(0)}
-                        </div>
-                    )}
-                  </div>
+              <div className="relative w-28 h-28 rounded-full overflow-hidden mb-4 border-4 border-rosa-principal">
+                
+                {/* --- 3. APLICACIÓN DE LA SOLUCIÓN DE IMAGEN --- */}
+                <Image
+                  // Usamos la función helper aquí
+                  src={getImageUrl(testimonial.image)}
+                  alt={`Foto de ${testimonial.name}`}
+                  layout="fill"
+                  objectFit="cover"
+                  // IMPORTANTE: Esto permite cargar imágenes de localhost sin configuración extra
+                  unoptimized={true} 
+                />
+                
+              </div>
 
-                  <div className="p-6 text-center flex flex-col flex-grow">
-                    <h4 className="text-xl font-bold text-black mb-2 font-title">
-                        {testimonial.name}
-                    </h4>
-                    
-                    {/* Contenido (Quote) */}
-                    <div className="text-black font-sans text-sm italic mb-4 flex-grow line-clamp-4">
-                        <div dangerouslySetInnerHTML={{ __html: testimonial.message }} />
-                    </div>
+              <div className="text-center flex flex-col flex-grow w-full">
+                <h4 className="text-xl font-bold text-black mb-1 font-title">
+                    {testimonial.name}
+                </h4>
+                
+                <p className="text-sm text-turquesa-secundario font-bold font-sans mb-4 uppercase">
+                    {testimonial.role}
+                </p>
 
-                    {/* Rol (en lugar de Age, usamos el Rol que viene del backend) */}
-                    <p className="text-sm text-turquesa-secundario font-bold font-sans mt-auto uppercase">
-                        {testimonial.role}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
+                <div className="text-gray-700 font-sans text-sm italic mb-4 flex-grow line-clamp-4">
+                    {/* Renderizamos el mensaje de forma segura. 
+                        Si viene HTML del editor de texto enriquecido, usa dangerouslySetInnerHTML con cuidado.
+                        Si es texto plano, usa <p>{testimonial.message}</p> */}
+                    <div dangerouslySetInnerHTML={{ __html: testimonial.message }} />
+                </div>
+
+              </div>
             </motion.div>
-        )}
+          ))}
+        </motion.div>
 
         <div className="text-center mt-12">
-          <a href="/testimonios" className="bg-rosa-principal text-white px-8 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button inline-block">
+          <a href="/testimonials" className="bg-rosa-principal text-white px-8 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button inline-block">
             VER TODAS LAS HISTORIAS
           </a>
         </div>
@@ -146,4 +180,4 @@ const Testimonials = () => {
   );
 };
 
-export default Testimonials;
+export default TestimonialsSection;
