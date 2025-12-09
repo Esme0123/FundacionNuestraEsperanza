@@ -4,180 +4,152 @@ import Image from 'next/image';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Alliances from '@/components/Alliances';
-import { fetchTestimonials } from '@/services/dataService'; 
 
-// 1. Definir la interfaz de la estructura de datos que esperamos de la API
 interface TestimonialItem {
     id: number;
     name: string;
-    quote: string;
-    type: 'image' | 'video';
-    image: string | null; // URL de la imagen (completa desde Laravel)
-    embedUrl: string | null; // URL de embed para videos (ej. YouTube, Facebook)
-    externalLink: string;
-    age: string;
+    role: string | null;   // Ej: "Madre de familia"
+    message: string;       // Laravel manda esto (mapeado desde 'content')
+    image: string | null;  // URL completa o null
 }
 
-const Testimonials = () => {
-    // 2. Estados para almacenar los datos y el estado de carga
+interface ApiTestimonialResponse {
+    id: number;
+    name: string;
+    role: string | null;
+    message?: string;
+    content?: string;
+    image: string | null;
+}
+
+export default function TestimonialsPage() {
+    // 2. Estados
     const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // 3. Efecto para cargar los datos del API
+    // URL del Backend
+    const API_URL = 'http://127.0.0.1:8000/api';
+    
     useEffect(() => {
         const loadTestimonials = async () => {
             try {
-                setLoading(true);
-                // Llama al servicio para obtener los datos
-                const data = await fetchTestimonials(); 
-                setTestimonials(data); // Almacena los testimonios cargados
+                const response = await fetch(`${API_URL}/testimonials`);
+                if (response.ok) {
+                    const data = await response.json();
+                    // Aseguramos que los datos se ajusten a la interfaz
+                    // Si tu API devuelve 'content' en vez de 'message', aquí lo arreglamos
+                    const normalizedData = data.map((item: ApiTestimonialResponse) => ({
+                        id: item.id,
+                        name: item.name,
+                        role: item.role || 'Beneficiario', // Valor por defecto si es nulo
+                        message: item.message || item.content, // Soporte para ambos nombres
+                        image: item.image
+                    }));
+
+                    setTestimonials(normalizedData);
+                } else {
+                    console.error("Error al obtener testimonios");
+                }
             } catch (error) {
-                console.error("Fallo al cargar testimonios desde la API:", error);
-                setTestimonials([]); // Deja la lista vacía si hay un error
+                console.error("Error de conexión:", error);
             } finally {
                 setLoading(false);
             }
         };
-        loadTestimonials();
-    }, []); 
 
-    // 4. Mostrar estado de carga
-    if (loading) {
-        return (
-            <main>
-                <Navbar />
-                <section className="py-16 md:py-20 bg-gray-50 text-center min-h-screen">
-                    <h2 className="text-3xl font-bold">Cargando Testimonios...</h2>
-                    <div className="flex justify-center mt-5"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-rosa-principal"></div></div>
-                </section>
-                <Footer />
-            </main>
-        );
-    }
-    
-    // 5. Mostrar si no hay datos
-    if (testimonials.length === 0 && !loading) {
-        return (
-            <main>
-                <Navbar />
-                <section className="py-16 md:py-20 bg-gray-50 text-center min-h-screen">
-                    <h2 className="text-3xl font-bold text-red-500">No se encontraron testimonios.</h2>
-                    <p>Revisa tu servidor de Laravel (`/api/testimonials`) o si hay datos creados.</p>
-                </section>
-                <Footer />
-            </main>
-        );
-    }
+        loadTestimonials();
+    }, []);
 
     return (
         <main>
             <Navbar />
             
-            {/* Sección de Título */}
-            <section className="bg-celeste-claro py-12 md:py-16">
-                <div className="container mx-auto px-6 text-center">
-                    <h1 className="text-3xl md:text-4xl font-bold text-black mb-2 font-title">TESTIMONIOS</h1>
-                    <div className="flex justify-center">
-                        <div className="bg-rosa-principal w-20 h-2"></div>
-                    </div>
+            {/* Header */}
+            <section className="bg-celeste-claro py-20 text-center">
+                <div className="container mx-auto px-6">
+                    <h1 className="text-4xl md:text-5xl font-bold text-azul-marino font-title mb-6">
+                        Testimonios
+                    </h1>
+                    <p className="text-xl text-gray-700 max-w-3xl mx-auto font-sans">
+                        Historias reales de esperanza, lucha y superación que nos inspiran cada día.
+                    </p>
                 </div>
             </section>
-            
-            {/* Sección de Testimonios */}
-            <section id="testimonios" className="bg-rosa-claro py-16 md:py-20">
+
+            {/* Lista de Testimonios */}
+            <section className="bg-white py-16">
                 <div className="container mx-auto px-6">
-                    <h2 data-aos="fade-up" className="text-3xl md:text-4xl font-bold text-black mb-2 text-center font-title">LO QUE VIVIERON CON NOSOTROS</h2>
-                    <div className="flex justify-center">
-                        <div className="bg-rosa-principal w-20 h-2 mb-12"></div>
-                    </div>
-                    {/* Grid responsivo */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {/* 6. Mapear sobre el estado 'testimonials' */}
-                        {testimonials.map((item, index) => (
-                            <div key={item.id || index} data-aos="fade-up" data-aos-delay={100 * index} className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-xl">
-                                <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="block h-64">
-                                    {item.type === 'image' && item.image ? (
-                                        <div className="relative w-full h-full overflow-hidden">
-                                            <Image
-                                                src={item.image}
-                                                alt={item.name}
-                                                layout="fill"
-                                                objectFit="cover"
-                                                unoptimized={true} 
-                                                className="transition-transform duration-500 group-hover:scale-110"
+                    
+                    {loading ? (
+                        <div className="text-center py-20 text-gray-500">Cargando historias...</div>
+                    ) : testimonials.length === 0 ? (
+                        <div className="text-center py-20 text-gray-500">Aún no hay testimonios registrados.</div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                            {testimonials.map((item) => (
+                                <div 
+                                    key={item.id} 
+                                    className="bg-beige-claro rounded-xl shadow-lg p-8 flex flex-col items-center text-center hover:shadow-2xl transition-shadow duration-300"
+                                >
+                                    {/* Imagen Circular (Avatar) */}
+                                    <div className="relative w-24 h-24 mb-6">
+                                        {item.image ? (
+                                            <Image 
+                                                src={item.image} 
+                                                alt={item.name} 
+                                                fill
+                                                className="rounded-full object-cover border-4 border-white shadow-md"
                                             />
-                                        </div>
-                                    ) : (item.type === 'video' && item.embedUrl ? (
-                                        // Contenedor para el video embed
-                                        <div className="relative w-full h-full overflow-hidden"> 
-                                            <iframe
-                                                className="absolute top-0 left-0 w-full h-full"
-                                                src={item.embedUrl}
-                                                title={`Video testimonio de ${item.name}`}
-                                                frameBorder="0"
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                allowFullScreen
-                                            ></iframe>
-                                        </div>
-                                    ) : (
-                                        // Placeholder si no hay imagen ni video
-                                        <div className="flex items-center justify-center w-full h-full bg-gray-200 text-gray-500">
-                                            Contenido no disponible
-                                        </div>
-                                    ))}
-                                </a>
-                                <div className="p-6 text-center flex-grow flex flex-col">
-                                    <h4 className="text-xl font-bold text-black mb-2 font-title">{item.name}</h4>
-                                    <p className="text-gray-700 font-sans text-sm italic mb-4 flex-grow">&quot;{item.quote}&quot;</p>
-                                    <p className="text-sm text-gray-500 font-sans mt-auto">{item.age}</p>
+                                        ) : (
+                                            // Si no hay foto, mostramos un círculo gris con la inicial
+                                            <div className="w-full h-full rounded-full bg-gray-300 flex items-center justify-center text-gray-500 text-2xl font-bold border-4 border-white shadow-md">
+                                                {item.name.charAt(0)}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Comillas decorativas */}
+                                    <div className="text-rosa-principal text-4xl font-serif leading-none mb-4">
+                                        “
+                                    </div>
+
+                                    {/* Contenido del Testimonio */}
+                                    {/* Usamos dangerouslySetInnerHTML porque Filament guarda HTML (negritas, párrafos) */}
+                                    <div 
+                                        className="text-gray-700 font-sans italic mb-6 line-clamp-6 flex-grow prose-sm"
+                                        dangerouslySetInnerHTML={{ __html: item.message }}
+                                    />
+
+                                    {/* Nombre y Rol */}
+                                    <div className="mt-auto">
+                                        <h3 className="text-xl font-bold text-azul-marino font-title">
+                                            {item.name}
+                                        </h3>
+                                        <p className="text-turquesa-secundario font-bold text-sm uppercase mt-1">
+                                            {item.role}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Sección de llamada a la acción (Estática) */}
+                    <div className="mt-20 bg-azul-marino rounded-2xl p-10 md:p-16 text-white text-center">
+                        <h3 className="text-2xl md:text-3xl font-bold font-title mb-4">¿Tienes una historia que contar?</h3>
+                        <p className="mb-8 font-sans max-w-2xl mx-auto">
+                            Si has sido parte de nuestra fundación, nos encantaría conocer tu experiencia.
+                        </p>
+                        <a href="/contacto" className="bg-rosa-principal text-white px-8 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
+                            CONTÁCTANOS
+                        </a>
                     </div>
 
-                    {/* Paginación visual estática (mantenida por la estructura original) */}
-                    <div className="flex justify-center mt-16 space-x-1 md:space-x-2">
-                         <a href="#" className="px-3 py-2 md:px-4 md:py-2 text-gray-500 hover:text-rosa-principal">{"<"}</a>
-                         <a href="#" className="px-3 py-2 md:px-4 md:py-2 text-white bg-rosa-principal rounded-md">1</a>
-                         <a href="#" className="px-3 py-2 md:px-4 md:py-2 text-gray-700 hover:bg-gray-200 rounded-md">2</a>
-                         <a href="#" className="px-3 py-2 md:px-4 md:py-2 text-gray-700 hover:bg-gray-200 rounded-md">3</a>
-                         <a href="#" className="px-3 py-2 md:px-4 md:py-2 text-gray-500 hover:text-rosa-principal">{">"}</a>
-                    </div>
-                    
                 </div>
             </section>
             
-            {/* Sección Cómo Ayudar (se mantiene igual) */}
-            <section className="bg-azul-marino py-16 md:py-20 text-white text-center">
-                <div className="container mx-auto px-6">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4 font-title">CÓMO AYUDAR</h2>
-                    <div className="flex justify-center">
-                        <div className="bg-rosa-principal w-20 h-2 mb-10"></div>
-                    </div>
-                    {/* Grid responsivo */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                        <div className="bg-white/10 p-8 rounded-lg hover:bg-white/20 transition-colors duration-300">
-                            <h3 className="text-2xl md:text-3xl font-bold font-title mb-4">Voluntariado</h3>
-                            <p className="mb-6 font-sans">Suma tu tiempo y talento a nuestra causa. Juntos, podemos llevar más sonrisas y esperanza a nuestros niños.</p>
-                            <a href="#" className="bg-white text-azul-marino px-7 py-4 rounded-full font-bold hover:bg-amarillo-detalle hover:text-white transition-all duration-300 font-button">
-                                SER VOLUNTARIO
-                            </a>
-                        </div>
-                        <div className="bg-white/10 p-8 rounded-lg hover:bg-white/20 transition-colors duration-300">
-                            <h3 className="text-2xl md:text-3xl font-bold font-title mb-4">Donaciones</h3>
-                            <p className="mb-6 font-sans">Tu aporte económico nos permite continuar brindando alojamiento, alimentación y apoyo integral a más familias.</p>
-                            <a href="#" className="bg-rosa-principal text-white px-7 py-4 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
-                                DONAR AHORA
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <Alliances/>
+            <Alliances />
             <Footer />
         </main>
     );
 };
-
-export default Testimonials;
