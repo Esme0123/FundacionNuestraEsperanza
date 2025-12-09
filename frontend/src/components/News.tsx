@@ -103,7 +103,7 @@ const News = () => {
                     )}
                     
                     {/* Fecha flotante */}
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur text-azul-marino text-xs font-bold px-3 py-1 rounded-full shadow-sm border border-gray-200">
+                    <div className="absolute top-4 right-4 bg-rosa-principal backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm border border-gray-200">
                         {item.date || 'Reciente'}
                     </div>
                   </div>
