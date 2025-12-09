@@ -9,19 +9,23 @@ import Alliances from '@/components/Alliances';
 interface NewsItem {
     id: number;
     title: string;
-    content: string; // Laravel devuelve 'content', no 'description'
+    content: string; 
     image: string | null;
     date: string;
-    // Como tu BD no tiene categorías, lo manejaremos manual
 }
 
-const CARDS_PER_PAGE = 6; // Aumenté a 6 para que se vea mejor la grilla
+const CARDS_PER_PAGE = 6; 
 
 export default function NewsPage() {
-    // Estados
+    // Estados de Datos
     const [news, setNews] = useState<NewsItem[]>([]);
     const [loading, setLoading] = useState(true);
+    
+    // Estado de Paginación
     const [currentPage, setCurrentPage] = useState(1);
+
+    // NUEVO: Estado para saber qué noticia está expandida (guardamos el ID)
+    const [expandedId, setExpandedId] = useState<number | null>(null);
 
     // URL del Backend
     const API_URL = 'http://127.0.0.1:8000/api';
@@ -46,6 +50,12 @@ export default function NewsPage() {
 
         loadNews();
     }, []);
+
+    // Función para alternar expandir/contraer
+    const toggleExpand = (id: number) => {
+        // Si ya estaba abierta, la cerramos (null). Si no, abrimos esa (id).
+        setExpandedId(prevId => (prevId === id ? null : id));
+    };
 
     // 3. Lógica de Paginación
     const indexOfLastCard = currentPage * CARDS_PER_PAGE;
@@ -79,52 +89,60 @@ export default function NewsPage() {
                         <div className="text-center py-20 text-gray-500">No hay noticias publicadas aún.</div>
                     ) : (
                         <>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-                                {currentNews.map((item) => (
-                                    <div 
-                                        key={item.id} 
-                                        className="bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 flex flex-col"
-                                    >
-                                        {/* Imagen */}
-                                        <div className="relative h-56 w-full bg-gray-100">
-                                            {item.image ? (
-                                                <Image 
-                                                    src={item.image} 
-                                                    alt={item.title} 
-                                                    fill
-                                                    className="object-cover"
-                                                />
-                                            ) : (
-                                                <div className="flex items-center justify-center h-full text-gray-400">
-                                                    Sin Imagen
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto items-start">
+                                {currentNews.map((item) => {
+                                    // Verificamos si esta tarjeta específica está expandida
+                                    const isExpanded = expandedId === item.id;
+
+                                    return (
+                                        <div 
+                                            key={item.id} 
+                                            className={`bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 flex flex-col ${isExpanded ? 'row-span-2' : ''}`}
+                                        >
+                                            {/* Imagen */}
+                                            <div className="relative h-56 w-full bg-gray-100 flex-shrink-0">
+                                                {item.image ? (
+                                                    <Image 
+                                                        src={item.image} 
+                                                        alt={item.title} 
+                                                        fill
+                                                        className="object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="flex items-center justify-center h-full text-gray-400">
+                                                        Sin Imagen
+                                                    </div>
+                                                )}
+                                                <div className="absolute top-4 right-4 bg-rosa-principal text-white text-xs font-bold px-3 py-1 rounded-full">
+                                                    {item.date || 'Reciente'}
                                                 </div>
-                                            )}
-                                            <div className="absolute top-4 right-4 bg-rosa-principal text-white text-xs font-bold px-3 py-1 rounded-full">
-                                                {item.date || 'Reciente'}
+                                            </div>
+
+                                            {/* Contenido */}
+                                            <div className="p-6 flex flex-col flex-grow">
+                                                <span className="text-turquesa-secundario text-sm font-bold mb-2 uppercase">
+                                                    Noticias
+                                                </span>
+                                                <h3 className="text-xl font-bold font-title mb-3 text-azul-marino">
+                                                    {item.title}
+                                                </h3>
+                                                
+                                                <div 
+                                                    className={`text-gray-600 font-sans text-sm mb-4 transition-all duration-500 ease-in-out ${isExpanded ? '' : 'line-clamp-3'}`}
+                                                    dangerouslySetInnerHTML={{ __html: item.content }}
+                                                />
+
+                                                {/* Botón con onClick */}
+                                                <button 
+                                                    onClick={() => toggleExpand(item.id)}
+                                                    className="text-rosa-principal font-bold hover:underline self-start mt-auto focus:outline-none"
+                                                >
+                                                    {isExpanded ? 'Leer menos ↑' : 'Leer más →'}
+                                                </button>
                                             </div>
                                         </div>
-
-                                        {/* Contenido */}
-                                        <div className="p-6 flex flex-col flex-grow">
-                                            <span className="text-turquesa-secundario text-sm font-bold mb-2 uppercase">
-                                                Noticias
-                                            </span>
-                                            <h3 className="text-xl font-bold font-title mb-3 text-azul-marino line-clamp-2">
-                                                {item.title}
-                                            </h3>
-                                            
-                                            {/* Extracto del contenido (renderizamos HTML seguro) */}
-                                            <div 
-                                                className="text-gray-600 font-sans text-sm mb-4 line-clamp-3 flex-grow"
-                                                dangerouslySetInnerHTML={{ __html: item.content }}
-                                            />
-
-                                            <button className="text-rosa-principal font-bold hover:underline self-start mt-auto">
-                                                Leer más →
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
 
                             {/* Paginación */}
