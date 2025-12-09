@@ -8,7 +8,6 @@ const Alliances = () => {
     { src: 'ic_canica.jpeg', url: 'https://canica.org.mx/' },
     { src: 'ic_jude.jpg', url: 'https://www.stjude.org/es/' },
     { src: 'ic_matters.png', url: 'https://foundation-s-mychildmatters.opendatasoft.com/pages/home/' },
-    { src: 'ic_msc.png', url: 'https://www.msc.com/en/local-information/america/bolivia?utm_source=gmb&utm_medium=organic&utm_campaign=local' },
   ];
 
   return (
