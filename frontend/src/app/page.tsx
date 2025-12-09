@@ -10,27 +10,38 @@ import Testimonials from "@/components/Testimonials";
 import News from "@/components/News";
 import Contact from "@/components/Contact";
 import Subscribe from "@/components/Suscribe";
-import Alliances from "@/components/Alliances"
+import Alliances from "@/components/Alliances";
 import Footer from "@/components/Footer";
 import DonationModal from '@/components/DonationModal';
+
 export default function HomePage() {
+  // 1. Estado del Modal (Ya lo tenías bien)
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
   return (
     <main>
+      {/* Navbar y Hero ya tenían la función, ¡excelente! */}
       <Navbar onOpenDonationModal={openModal} />
       <Hero onOpenDonationModal={openModal} />
+      
       <Stats/>
       <AboutUs />
       <Programs/>
-      <HowToHelp/>
+
+      {/* AQUI ESTABA EL DETALLE: Pasamos la función al componente */}
+      <HowToHelp onOpenDonationModal={openModal} />
+
       <Testimonials/>
       <News/>
       <Contact/>
       <Subscribe/>
       <Alliances/>
       <Footer />
+
+      {/* El Modal que se abre */}
       <DonationModal isOpen={isModalOpen} onClose={closeModal} />
     </main>
   );
