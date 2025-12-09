@@ -1,7 +1,8 @@
 <?php
 
 namespace Database\Seeders;
-
+use Illuminate\\Support\\Facades\\File;
+use Illuminate\\Support\\Facades\\Storage;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 use App\Models\Testimonial;
@@ -65,8 +66,28 @@ class DataImportSeeder extends Seeder
         $importedCount = 0;
 
         foreach ($data as $item) {
-            // Elimina 'id' para que la base de datos asigne uno nuevo automáticamente
-            unset($item['id']); 
+            unset($item['id']);
+            
+            if (isset($item['image']) && !empty($item['image'])) {
+                // Origen: La carpeta donde guardaron las fotos base
+                $sourcePath = database_path('seeders/images/' . basename($item['image']));
+                
+                // Destino: La carpeta pública donde Laravel las busca
+                // Ejemplo: storage/app/public/programs/foto.jpg
+                $destinationPath = storage_path('app/public/' . $item['image']);
+                
+                // Creamos la carpeta destino si no existe
+                $directory = dirname($destinationPath);
+                if (!File::exists($directory)) {
+                    File::makeDirectory($directory, 0755, true);
+                }
+
+                // Copiamos el archivo FÍSICAMENTE
+                if (File::exists($sourcePath)) {
+                    File::copy($sourcePath, $destinationPath);
+                }
+            }
+
             $modelClass::create($item);
             $importedCount++;
         }
