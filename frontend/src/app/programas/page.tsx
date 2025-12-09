@@ -4,24 +4,28 @@ import Image from 'next/image';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Alliances from '@/components/Alliances';
-import Contact from '@/components/Contact'; // Asegúrate de importar esto si lo usas
-import Subscribe from '@/components/Suscribe'; // Asegúrate de importar esto
+import Contact from '@/components/Contact';
+import Subscribe from '@/components/Suscribe';
+import HowToHelp from '@/components/HowToHelp';
 
-// 1. Definimos la estructura de datos (Typescript)
+// 1. Interfaz de Datos
 interface Program {
   id: number;
   title: string;
   description: string;
   image: string;
-  color?: string;
+  color: string; // Este es el color que viene del Admin
 }
 
+const ITEMS_PER_PAGE = 6; // Paginación de 6 en 6
+
 export default function ProgramsPage() {
-    // 2. Estado para los programas
+    // 2. Estados
     const [programs, setPrograms] = useState<Program[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
     
-    // URL del Backend (Asegúrate de que este puerto sea el correcto)
+    // URL del Backend
     const API_URL = 'http://127.0.0.1:8000/api';
 
     // 3. Conexión al Backend
@@ -36,7 +40,7 @@ export default function ProgramsPage() {
                     console.error("Error al obtener programas");
                 }
             } catch (error) {
-                console.error("Error de conexión con API:", error);
+                console.error("Error de conexión:", error);
             } finally {
                 setLoading(false);
             }
@@ -44,6 +48,18 @@ export default function ProgramsPage() {
         
         loadPrograms();
     }, []);
+
+    // 4. Lógica de Paginación
+    const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
+    const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+    const currentPrograms = programs.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(programs.length / ITEMS_PER_PAGE);
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+        // Scroll suave al inicio de la lista cuando cambian de página
+        document.getElementById('programs-list')?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     return (
         <main>
@@ -62,7 +78,7 @@ export default function ProgramsPage() {
             </section>
 
             {/* Lista de Programas */}
-            <section className="bg-white py-16">
+            <section id="programs-list" className="bg-white py-16">
                 <div className="container mx-auto px-6">
                     
                     {loading ? (
@@ -70,74 +86,97 @@ export default function ProgramsPage() {
                             <p className="text-xl text-gray-500">Cargando programas...</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-                            {programs.map((program) => (
-                                <div 
-                                    key={program.id} 
-                                    className="bg-beige-claro rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 flex flex-col"
-                                >
-                                    <div className="relative h-64 w-full bg-gray-200">
-                                        {program.image ? (
-                                            <Image 
-                                                src={program.image} 
-                                                alt={program.title} 
-                                                fill
-                                                className="object-cover"
-                                                // Manejo de errores de imagen básico
-                                                onError={(e) => {
-                                                    // Opcional: poner una imagen por defecto si falla
-                                                    e.currentTarget.style.display = 'none';
-                                                }}
-                                            />
-                                        ) : (
-                                            <div className="flex items-center justify-center h-full text-gray-400">
-                                                Sin Imagen
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="p-8 flex flex-col flex-grow">
-                                        <h3 className="text-2xl md:text-3xl font-bold font-title mb-4 text-azul-marino">
-                                            {program.title}
-                                        </h3>
-                                        
-                                        {/* Renderizado de Descripción (HTML o Texto) */}
-                                        <div className="mb-6 font-sans text-gray-700 flex-grow prose">
-                                            {program.description && (
-                                                <div dangerouslySetInnerHTML={{ __html: program.description }} />
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                                {currentPrograms.map((program) => (
+                                    <div 
+                                        key={program.id} 
+                                        // AQUI APLICAMOS EL COLOR DEL ADMIN
+                                        // Si no trae color, usa blanco por defecto
+                                        className={`${program.color || 'bg-white'} rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-transform duration-300 hover:-translate-y-2 flex flex-col`}
+                                    >
+                                        <div className="relative h-64 w-full bg-gray-200">
+                                            {program.image ? (
+                                                <Image 
+                                                    src={program.image} 
+                                                    alt={program.title} 
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <div className="flex items-center justify-center h-full text-gray-400">
+                                                    Sin Imagen
+                                                </div>
                                             )}
                                         </div>
+                                        <div className="p-8 flex flex-col flex-grow">
+                                            <h3 className="text-2xl font-bold font-title mb-4 text-azul-marino">
+                                                {program.title}
+                                            </h3>
+                                            
+                                            {/* Descripción */}
+                                            <div className="mb-6 font-sans text-gray-800 flex-grow text-sm leading-relaxed">
+                                                {program.description && (
+                                                    <div dangerouslySetInnerHTML={{ __html: program.description }} />
+                                                )}
+                                            </div>
 
-                                        <button className="self-start bg-rosa-principal text-white px-7 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
-                                            APOYAR ESTE PROGRAMA
-                                        </button>
+                                            <button className="self-start bg-white/80 text-azul-marino px-6 py-2 rounded-full font-bold hover:bg-azul-marino hover:text-white transition duration-300 font-button border-2 border-transparent hover:border-white shadow-sm">
+                                                CONOCER MÁS
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                                ))}
+                            </div>
 
-                    {/* Sección Voluntariado/Donaciones Estática */}
-                    <div className="mt-20 bg-azul-marino rounded-2xl p-10 md:p-16 text-white text-center">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                            <div className="bg-white/10 p-8 rounded-lg">
-                                <h3 className="text-2xl font-bold font-title mb-4">Voluntariado</h3>
-                                <p className="mb-6 font-sans">Suma tu tiempo y talento.</p>
-                                <button className="bg-white text-azul-marino px-7 py-4 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
-                                    SER VOLUNTARIO
-                                </button>
-                            </div>
-                            <div className="bg-white/10 p-8 rounded-lg">
-                                <h3 className="text-2xl font-bold font-title mb-4">Donaciones</h3>
-                                <p className="mb-6 font-sans">Tu aporte hace la diferencia.</p>
-                                <button className="bg-rosa-principal text-white px-7 py-4 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
-                                    DONAR AHORA
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                            {/* Controles de Paginación */}
+                            {totalPages > 1 && (
+                                <div className="flex justify-center mt-12 space-x-2">
+                                    <button
+                                        onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+                                        disabled={currentPage === 1}
+                                        className={`px-4 py-2 rounded-md font-bold ${
+                                            currentPage === 1 
+                                            ? 'text-gray-300 cursor-not-allowed' 
+                                            : 'text-azul-marino hover:bg-gray-100'
+                                        }`}
+                                    >
+                                        Anterior
+                                    </button>
+                                    
+                                    {/* Números de página */}
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+                                        <button
+                                            key={number}
+                                            onClick={() => handlePageChange(number)}
+                                            className={`px-4 py-2 rounded-md font-bold transition-colors ${
+                                                currentPage === number
+                                                    ? 'bg-rosa-principal text-white'
+                                                    : 'text-gray-600 hover:bg-gray-100'
+                                            }`}
+                                        >
+                                            {number}
+                                        </button>
+                                    ))}
+
+                                    <button
+                                        onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+                                        disabled={currentPage === totalPages}
+                                        className={`px-4 py-2 rounded-md font-bold ${
+                                            currentPage === totalPages 
+                                            ? 'text-gray-300 cursor-not-allowed' 
+                                            : 'text-azul-marino hover:bg-gray-100'
+                                        }`}
+                                    >
+                                        Siguiente
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
             </section>
-            
+            <HowToHelp />
             <Alliances/>
             <Subscribe />
             <Contact />
