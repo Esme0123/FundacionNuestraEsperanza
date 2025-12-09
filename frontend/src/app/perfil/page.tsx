@@ -1,396 +1,161 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import DonationModal from '@/components/DonationModal';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Alliances from '@/components/Alliances';
+import Contact from '@/components/Contact';
+import Subscribe from '@/components/Suscribe';
+import HowToHelp from '@/components/HowToHelp';
+import DonationModal from '@/components/DonationModal'; 
 
-// Un componente pequeño para el spinner de carga
-const LoadingSpinner = () => (
-  <div className="flex justify-center items-center h-full">
-    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-rosa-principal"></div>
-  </div>
-);
-
-// Componente para el formulario de Editar Perfil
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const ProfileForm = ({ user }: { user: any }) => {
-  const [name, setName] = useState(user.name);
-  const [email, setEmail] = useState(user.email);
-  const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    // TODO: Llamada a la API de Laravel para ACTUALIZAR perfil
-    // const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://tu-api-laravel.com';
-    // const response = await fetch(`${API_URL}/api/user/profile`, { ... });
-
-    // --- Simulación de éxito ---
-    await new Promise(res => setTimeout(res, 1000));
-    setSuccess('¡Perfil actualizado con éxito!');
-    // Aquí también deberías actualizar el usuario en el AuthContext
-    // auth.login(updatedUser, auth.token);
-    // --- Fin de simulación ---
-
-    setIsLoading(false);
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label htmlFor="name" className="text-sm font-bold text-gray-700 font-sans">
-          Nombre Completo
-        </label>
-        <input
-          id="name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-rosa-principal"
-        />
-      </div>
-      <div>
-        <label htmlFor="email" className="text-sm font-bold text-gray-700 font-sans">
-          Correo Electrónico
-        </label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-rosa-principal"
-        />
-      </div>
-
-      {success && <p className="text-sm text-green-600">{success}</p>}
-      {error && <p className="text-sm text-red-600">{error}</p>}
-
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="px-6 py-2 font-bold text-white transition-colors duration-300 rounded-full bg-rosa-principal hover:bg-amarillo-detalle font-button disabled:bg-gray-400"
-      >
-        {isLoading ? 'Guardando...' : 'Guardar Cambios'}
-      </button>
-    </form>
-  );
-};
-
-// Componente para el formulario de Cambiar Contraseña
-const PasswordForm = () => {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [newPasswordConfirmation, setNewPasswordConfirmation] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    if (newPassword !== newPasswordConfirmation) {
-      setError('Las nuevas contraseñas no coinciden.');
-      setIsLoading(false);
-      return;
-    }
-
-    // TODO: Llamada a la API de Laravel para CAMBIAR contraseña
-    // const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://tu-api-laravel.com';
-    // const response = await fetch(`${API_URL}/api/user/password`, { ... });
-
-    await new Promise(res => setTimeout(res, 1000));
-    setSuccess('¡Contraseña actualizada con éxito!');
-
-    setIsLoading(false);
-    setCurrentPassword('');
-    setNewPassword('');
-    setNewPasswordConfirmation('');
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label
-          htmlFor="currentPassword"
-          className="text-sm font-bold text-gray-700 font-sans"
-        >
-          Contraseña Actual
-        </label>
-        <input
-          id="currentPassword"
-          type="password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-rosa-principal"
-        />
-      </div>
-      <div>
-        <label
-          htmlFor="newPassword"
-          className="text-sm font-bold text-gray-700 font-sans"
-        >
-          Nueva Contraseña
-        </label>
-        <input
-          id="newPassword"
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-rosa-principal"
-        />
-      </div>
-      <div>
-        <label
-          htmlFor="newPasswordConfirmation"
-          className="text-sm font-bold text-gray-700 font-sans"
-        >
-          Confirmar Nueva Contraseña
-        </label>
-        <input
-          id="newPasswordConfirmation"
-          type="password"
-          value={newPasswordConfirmation}
-          onChange={(e) => setNewPasswordConfirmation(e.target.value)}
-          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-rosa-principal"
-        />
-      </div>
-
-      {success && <p className="text-sm text-green-600">{success}</p>}
-      {error && <p className="text-sm text-red-600">{error}</p>}
-
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="px-6 py-2 font-bold text-white transition-colors duration-300 rounded-full bg-rosa-principal hover:bg-amarillo-detalle font-button disabled:bg-gray-400"
-      >
-        {isLoading ? 'Actualizando...' : 'Actualizar Contraseña'}
-      </button>
-    </form>
-  );
-};
-
-
-// --- Página Principal del Perfil ---
-export default function ProfilePage() {
-  const { user, isLoading: isAuthLoading, logout, token: contextToken } = useAuth();
-  const router = useRouter();
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [donations, setDonations] = useState<any[]>([]);
-  const [isDonationsLoading, setIsDonationsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-  // Pestaña activa (profile, password, donations)
-  const [activeTab, setActiveTab] = useState('profile');
-
-  // Efecto 1: Proteger la ruta
-  useEffect(() => {
-    if (!isAuthLoading && !user) {
-      router.push('/login');
-    }
-  }, [user, isAuthLoading, router]);
-
-  // Efecto 2: Cargar el historial (REAL)
-  useEffect(() => {
-    if (user && activeTab === 'donations') {
-      setIsDonationsLoading(true);
-
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
-      const token = contextToken || localStorage.getItem('token');
-
-      if (!token) {
-        console.error('No token found in context or localStorage');
-        setError('No se encontró sesión activa. Por favor, recargue la página o inicie sesión nuevamente.');
-        setIsDonationsLoading(false);
-        return;
-      }
-
-      fetch(`${API_URL}/api/auth/donations/my`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json',
-        }
-      })
-        .then(async res => {
-          if (!res.ok) {
-            const text = await res.text();
-            console.error('Error fetching donations:', res.status, text);
-            throw new Error(`Error ${res.status}: No se pudo cargar el historial.`);
-          }
-          return res.json();
-        })
-        .then(data => {
-          console.log('Donaciones recibidas:', data);
-          setDonations(data.data || []);
-        })
-        .catch(err => {
-          console.error('Fetch error:', err);
-          setError(err.message || 'No se pudo cargar el historial.');
-        })
-        .finally(() => setIsDonationsLoading(false));
-    }
-  }, [user, activeTab, contextToken]);
-
-  if (isAuthLoading || !user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-beige-claro">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
-  // Si el usuario está logueado, muestra la página
-  return (
-    <>
-      <Navbar onOpenDonationModal={openModal} />
-      <div className="min-h-screen bg-beige-claro pt-20">
-        <div className="container mx-auto px-6 py-12">
-
-          {/* Saludo y Logout */}
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-bold text-azul-marino font-title">
-              Mi Perfil
-            </h1>
-            <button
-              onClick={logout}
-              className="bg-gray-200 text-azul-marino px-6 py-2 rounded-full font-bold hover:bg-gray-300 transition duration-300 font-button"
-            >
-              Cerrar Sesión
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Navegación de Pestañas (Sidebar en desktop) */}
-            <aside className="md:col-span-1">
-              <nav className="flex flex-col space-y-2">
-                <button
-                  onClick={() => setActiveTab('profile')}
-                  className={`p-4 rounded-lg text-left font-bold font-sans ${activeTab === 'profile' ? 'bg-white text-rosa-principal shadow-md' : 'text-gray-700 hover:bg-white/50'}`}
-                >
-                  Editar Perfil
-                </button>
-                <button
-                  onClick={() => setActiveTab('password')}
-                  className={`p-4 rounded-lg text-left font-bold font-sans ${activeTab === 'password' ? 'bg-white text-rosa-principal shadow-md' : 'text-gray-700 hover:bg-white/50'}`}
-                >
-                  Cambiar Contraseña
-                </button>
-                <button
-                  onClick={() => setActiveTab('donations')}
-                  className={`p-4 rounded-lg text-left font-bold font-sans ${activeTab === 'donations' ? 'bg-white text-rosa-principal shadow-md' : 'text-gray-700 hover:bg-white/50'}`}
-                >
-                  Historial de Donaciones
-                </button>
-              </nav>
-            </aside>
-
-            {/* Contenido de la Pestaña Activa */}
-            <main className="md:col-span-3">
-              <div className="bg-white p-8 rounded-lg shadow-md">
-
-                {activeTab === 'profile' && (
-                  <div>
-                    <h2 className="text-3xl font-bold text-azul-marino font-title mb-6">
-                      Información Personal
-                    </h2>
-                    <ProfileForm user={user} />
-                  </div>
-                )}
-
-                {activeTab === 'password' && (
-                  <div>
-                    <h2 className="text-3xl font-bold text-azul-marino font-title mb-6">
-                      Actualizar Contraseña
-                    </h2>
-                    <PasswordForm />
-                  </div>
-                )}
-
-                {activeTab === 'donations' && (
-                  <div>
-                    <h2 className="text-3xl font-bold text-azul-marino font-title mb-6">
-                      Mi Historial de Donaciones
-                    </h2>
-                    {isDonationsLoading ? (
-                      <LoadingSpinner />
-                    ) : error ? (
-                      <p className="text-red-600 text-center font-sans">{error}</p>
-                    ) : donations.length === 0 ? (
-                      <p className="text-gray-600 text-center font-sans">No tienes donaciones registradas aún.</p>
-                    ) : (
-                      <div className="space-y-4">
-                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                        {donations.map((don: any) => (
-                          <div
-                            key={don.id}
-                            className="flex flex-col md:flex-row justify-between items-center p-4 border rounded-lg bg-gray-50 hover:bg-white transition-colors duration-200"
-                          >
-                            <div className="mb-2 md:mb-0">
-                              <p className="text-lg font-bold text-azul-marino font-sans">
-                                Donación #{don.id}
-                              </p>
-                              <p className="text-sm text-gray-500 font-sans">
-                                Fecha: {don.date}
-                              </p>
-                              {don.is_recurring && (
-                                <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full mt-1">
-                                  Recurrente
-                                </span>
-                              )}
-                            </div>
-
-                            <div className="flex flex-col items-end gap-2">
-                              <div className="text-right">
-                                <p className="text-xl font-bold text-verde-lima font-button">
-                                  {don.formatted_amount}
-                                </p>
-                                <span className={`px-3 py-1 text-sm rounded-full ${don.status === 'succeeded' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'
-                                  }`}>
-                                  {don.status === 'succeeded' ? 'Exitosa' : don.status}
-                                </span>
-                              </div>
-
-                              {/* Botón de Descarga de Certificado */}
-                              {don.certificate && don.certificate.download_link && (
-                                <a
-                                  href={don.certificate.download_link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white transition-colors duration-300 rounded-md bg-rosa-principal hover:bg-amarillo-detalle font-button"
-                                >
-                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                                  </svg>
-                                  Descargar Certificado
-                                </a>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-              </div>
-            </main>
-          </div>
-        </div>
-      </div>
-      <Footer />
-      <DonationModal isOpen={isModalOpen} onClose={closeModal} />
-    </>
-  );
+interface Program {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  color: string;
 }
+
+const ITEMS_PER_PAGE = 6;
+
+export default function ProgramsPage() {
+    const [programs, setPrograms] = useState<Program[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // 2. ESTADO DEL MODAL
+    const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
+    
+    const API_URL = 'http://127.0.0.1:8000/api';
+
+    useEffect(() => {
+        const loadPrograms = async () => {
+            try {
+                const response = await fetch(`${API_URL}/programs`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setPrograms(data);
+                }
+            } catch (error) {
+                console.error("Error al obtener programas", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadPrograms();
+    }, []);
+
+    const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
+    const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+    const currentPrograms = programs.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(programs.length / ITEMS_PER_PAGE);
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+        document.getElementById('programs-list')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    return (
+        <main>
+            {/* 3. PASAR LA FUNCIÓN AL NAVBAR */}
+            <Navbar onOpenDonationModal={() => setIsDonationModalOpen(true)} />
+            
+            <section className="bg-celeste-claro py-20 text-center">
+                <div className="container mx-auto px-6">
+                    <h1 className="text-4xl md:text-5xl font-bold text-azul-marino font-title mb-6">
+                        Nuestros Programas
+                    </h1>
+                    <p className="text-xl text-gray-700 max-w-3xl mx-auto font-sans">
+                        Proyectos diseñados para brindar esperanza y soporte integral.
+                    </p>
+                </div>
+            </section>
+
+            <section id="programs-list" className="bg-white py-16">
+                <div className="container mx-auto px-6">
+                    
+                    {loading ? (
+                        <div className="text-center py-20">
+                            <p className="text-xl text-gray-500">Cargando programas...</p>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                                {currentPrograms.map((program, index) => (
+                                    <motion.div 
+                                        key={program.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                                        whileHover={{ y: -15, scale: 1.05, boxShadow: "0px 25px 40px rgba(0,0,0,0.15)" }}
+                                        className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full border border-gray-100"
+                                    >
+                                        <div className={`w-full h-3 ${program.color || 'bg-rosa-principal'}`}></div>
+                                        
+                                        <div className="relative w-full h-0 pb-[66.66%] overflow-hidden bg-gray-200">
+                                            {program.image ? (
+                                                <Image 
+                                                    src={program.image} 
+                                                    alt={program.title} 
+                                                    fill
+                                                    className="object-cover absolute inset-0"
+                                                />
+                                            ) : (
+                                                <div className="absolute inset-0 flex items-center justify-center text-gray-400">Sin Imagen</div>
+                                            )}
+                                        </div>
+
+                                        <div className="p-6 flex flex-col flex-grow">
+                                            <h3 className="text-2xl font-bold font-title mb-4 text-black line-clamp-2">
+                                                {program.title}
+                                            </h3>
+                                            
+                                            <div className="mb-6 font-sans text-black flex-grow text-sm leading-relaxed line-clamp-4">
+                                                {program.description && (
+                                                    <div dangerouslySetInnerHTML={{ __html: program.description }} />
+                                                )}
+                                            </div>
+
+                                            <button className="self-start bg-rosa-principal text-white px-6 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
+                                                CONOCER MÁS
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            {totalPages > 1 && (
+                                <div className="flex justify-center mt-12 space-x-2">
+                                    <button onClick={() => handlePageChange(Math.max(currentPage - 1, 1))} disabled={currentPage === 1} className={`px-4 py-2 rounded-md font-bold ${currentPage === 1 ? 'text-gray-300' : 'text-azul-marino hover:bg-gray-100'}`}>Anterior</button>
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+                                        <button key={number} onClick={() => handlePageChange(number)} className={`px-4 py-2 rounded-md font-bold ${currentPage === number ? 'bg-rosa-principal text-white' : 'text-gray-600 hover:bg-gray-100'}`}>{number}</button>
+                                    ))}
+                                    <button onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))} disabled={currentPage === totalPages} className={`px-4 py-2 rounded-md font-bold ${currentPage === totalPages ? 'text-gray-300' : 'text-azul-marino hover:bg-gray-100'}`}>Siguiente</button>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+            </section>
+
+            {/* 4. PASAR FUNCIÓN A HOWTOHELP */}
+            <HowToHelp onOpenDonationModal={() => setIsDonationModalOpen(true)} />
+            
+            <Alliances/>
+            <Subscribe />
+            <Contact />
+            
+            {/* 5. PASAR FUNCIÓN AL FOOTER */}
+            <Footer onOpenDonationModal={() => setIsDonationModalOpen(true)} />
+
+            {/* 6. RENDERIZAR EL MODAL */}
+            <DonationModal 
+                isOpen={isDonationModalOpen} 
+                onClose={() => setIsDonationModalOpen(false)} 
+            />
+        </main>
+    );
+};

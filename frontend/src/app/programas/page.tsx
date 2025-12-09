@@ -150,7 +150,7 @@ export default function ProgramsPage() {
             <Alliances/>
             <Subscribe />
             <Contact />
-            <Footer />
+            <Footer onOpenDonationModal={() => setIsDonationModalOpen(true)} />
 
             <DonationModal isOpen={isDonationModalOpen} onClose={() => setIsDonationModalOpen(false)} />
             

@@ -39,7 +39,7 @@ export default function HomePage() {
       <Contact/>
       <Subscribe/>
       <Alliances/>
-      <Footer />
+      <Footer onOpenDonationModal={openModal} />
 
       {/* El Modal que se abre */}
       <DonationModal isOpen={isModalOpen} onClose={closeModal} />

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Alliances from '@/components/Alliances';
+import DonationModal from '@/components/DonationModal'; // <--- 1. IMPORTAR MODAL
 
 // 1. Interfaz exacta de lo que devuelve Laravel
 interface NewsItem {
@@ -20,17 +21,16 @@ export default function NewsPage() {
     // Estados de Datos
     const [news, setNews] = useState<NewsItem[]>([]);
     const [loading, setLoading] = useState(true);
-    
-    // Estado de Paginación
     const [currentPage, setCurrentPage] = useState(1);
-
-    // NUEVO: Estado para saber qué noticia está expandida (guardamos el ID)
     const [expandedId, setExpandedId] = useState<number | null>(null);
+
+    // 2. ESTADO DEL MODAL (Nuevo)
+    const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
 
     // URL del Backend
     const API_URL = 'http://127.0.0.1:8000/api';
 
-    // 2. Cargar datos del Backend
+    // Cargar datos del Backend
     useEffect(() => {
         const loadNews = async () => {
             try {
@@ -53,11 +53,10 @@ export default function NewsPage() {
 
     // Función para alternar expandir/contraer
     const toggleExpand = (id: number) => {
-        // Si ya estaba abierta, la cerramos (null). Si no, abrimos esa (id).
         setExpandedId(prevId => (prevId === id ? null : id));
     };
 
-    // 3. Lógica de Paginación
+    // Lógica de Paginación
     const indexOfLastCard = currentPage * CARDS_PER_PAGE;
     const indexOfFirstCard = indexOfLastCard - CARDS_PER_PAGE;
     const currentNews = news.slice(indexOfFirstCard, indexOfLastCard);
@@ -65,7 +64,8 @@ export default function NewsPage() {
 
     return (
         <main>
-            <Navbar />
+            {/* 3. CONECTAR NAVBAR */}
+            <Navbar onOpenDonationModal={() => setIsDonationModalOpen(true)} />
             
             {/* Header */}
             <section className="bg-beige-claro py-20 text-center">
@@ -91,7 +91,6 @@ export default function NewsPage() {
                         <>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto items-start">
                                 {currentNews.map((item) => {
-                                    // Verificamos si esta tarjeta específica está expandida
                                     const isExpanded = expandedId === item.id;
 
                                     return (
@@ -132,7 +131,6 @@ export default function NewsPage() {
                                                     dangerouslySetInnerHTML={{ __html: item.content }}
                                                 />
 
-                                                {/* Botón con onClick */}
                                                 <button 
                                                     onClick={() => toggleExpand(item.id)}
                                                     className="text-rosa-principal font-bold hover:underline self-start mt-auto focus:outline-none"
@@ -175,7 +173,15 @@ export default function NewsPage() {
             </section>
             
             <Alliances />
-            <Footer />
+            
+            {/* 4. CONECTAR FOOTER */}
+            <Footer onOpenDonationModal={() => setIsDonationModalOpen(true)} />
+
+            {/* 5. RENDERIZAR MODAL */}
+            <DonationModal 
+                isOpen={isDonationModalOpen} 
+                onClose={() => setIsDonationModalOpen(false)} 
+            />
         </main>
     );
 };

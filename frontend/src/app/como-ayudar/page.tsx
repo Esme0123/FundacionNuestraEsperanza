@@ -175,7 +175,7 @@ const HelpPage = () => {
         </section>
 
         <Alliances />
-        <Footer />
+        <Footer onOpenDonationModal={() => setIsDonationModalOpen(true)} />
 
         {/* 3. El Modal de Donación (Invisible hasta que se abre) */}
         <DonationModal 
