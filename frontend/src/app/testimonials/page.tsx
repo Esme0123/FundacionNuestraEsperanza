@@ -1,168 +1,164 @@
 "use client";
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import Slider from 'react-slick';
 import { motion } from 'framer-motion';
-
-// Estilos para el carrusel
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
-
-// Componentes
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer"; 
-import Quotes from '@/components/Quotes';
-import Suscribe from '@/components/Suscribe'; 
-import AboutUs from '@/components/AboutUs';
+import Footer from "@/components/Footer";
+import Alliances from '@/components/Alliances';
 import DonationModal from '@/components/DonationModal'; 
+import Quotes from '@/components/Quotes';
 
-
-const directorio = [
-  { name: 'Mónica Mendez Saucedo', role: 'Presidente', image: '/IMG/equipo/directorio/MONICA-PRESIDENTE.jpeg' },
-  { name: 'Mary Gloria Rengel Velasco', role: 'Vicepresidente', image: '/IMG/equipo/directorio/MARY-VICE PRESIDENTE.jpeg' },
-  { name: 'Nora Virginia Michel de Arteaga', role: 'Tesorera', image: '/IMG/equipo/directorio/NORAH-TESORERA.jpeg' },
-  { name: 'María Teresa Quevedo Espinoza', role: 'Secretaria', image: '/IMG/equipo/directorio/MARIATERESA-SECRETARIA.jpeg' }
-];
-
-const voluntarias = [
-  { name: 'Marlene Dalence', image: '/IMG/equipo/voluntarias/marlene.jpg' },
-  { name: 'Dolly Nanda', image: '/IMG/equipo/voluntarias/dolly.jpg' },
-  { name: 'Rosmery', image: '/IMG/equipo/voluntarias/rosmery.jpg' },
-  { name: 'Carola', image: '/IMG/equipo/voluntarias/carola.jpg' },
-  { name: 'Diva', image: '/IMG/equipo/voluntarias/diva.jpg' },
-  { name: 'Gaby', image: '/IMG/equipo/voluntarias/gaby.jpg' },
-  { name: 'Ma. Rene', image: '/IMG/equipo/voluntarias/maRene.jpg' },
-  { name: 'Mercedes', image: '/IMG/equipo/voluntarias/mercedes.jpg' },
-  { name: 'Rosario', image: '/IMG/equipo/voluntarias/rosario.jpg' },
-  { name: 'Sandra', image: '/IMG/equipo/voluntarias/sandra.jpg' },
-  { name: 'Susana', image: '/IMG/equipo/voluntarias/susana.jpg' },
-  { name: 'Verónica', image: '/IMG/equipo/voluntarias/veronica.jpg' },
-  { name: 'Ximena', image: '/IMG/equipo/voluntarias/ximena.jpg' },
-  { name: 'Yola', image: '/IMG/equipo/voluntarias/yola.jpg' },
-];
-
-export default function AboutPage() {
-  // 3. Estado del Modal
-  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
-  
-  const sliderSettings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-        }
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 2,
-        }
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-        }
-      }
-    ]
-  };
-
-  return (
-    <main className="overflow-x-hidden">
-      {/* 4. Pasar función al Navbar */}
-      <Navbar onOpenDonationModal={() => setIsDonationModalOpen(true)} />
-
-      <AboutUs />
-
-      {/* Directorio */}
-      <section className="bg-beige-claro py-16">
-        <div className="container mx-auto px-6 text-center">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false }}
-            transition={{ duration: 0.8 }}
-            className="text-3xl md:text-4xl font-bold text-azul-marino mb-12 font-title"
-          >
-            NUESTRO EQUIPO
-          </motion.h2>
-
-          <h3 className="text-3xl font-bold text-azul-marino mb-8 font-title">Directorio</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {directorio.map((member, index) => (
-              <motion.div 
-                key={member.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -10 }}
-                className="bg-white rounded-lg p-6 shadow-lg flex flex-col items-center"
-              >
-                <div className="relative w-40 h-40 rounded-full overflow-hidden border-4 border-rosa-principal mb-4">
-                  <Image src={member.image} alt={member.name} layout="fill" objectFit="cover" />
-                </div>
-                <h4 className="text-xl font-bold text-azul-marino font-title">{member.name}</h4>
-                <p className="text-turquesa-secundario font-bold font-sans">{member.role}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Voluntarias */}
-          <motion.h3 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: false }}
-            transition={{ duration: 0.8 }}
-            className="text-3xl font-bold text-azul-marino mb-8 font-title"
-          >
-            Voluntarias
-          </motion.h3>
-
-          <Slider {...sliderSettings}>
-            {voluntarias.map((volunteer) => (
-              <div key={volunteer.name} className="px-2">
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: false }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  whileHover={{ scale: 1.05, y: -10, boxShadow: "0px 15px 25px rgba(0,0,0,0.1)" }}
-                  className="flex flex-col items-center"
-                >
-                  <div className="relative w-32 h-32 rounded-full overflow-hidden shadow-md mb-4 mx-auto">
-                    <Image src={volunteer.image} alt={volunteer.name} layout="fill" objectFit="cover" />
-                  </div>
-                  <h4 className="font-bold text-md font-title text-center text-gray-700">
-                    {volunteer.name}
-                  </h4>
-                </motion.div>
-              </div>
-            ))}
-          </Slider>
-        </div>
-      </section>
-
-      <Quotes/>
-      <Suscribe />
-      
-      {/* 5. Pasar función al Footer */}
-      <Footer onOpenDonationModal={() => setIsDonationModalOpen(true)} />
-      
-      {/* 6. Renderizar Modal */}
-      <DonationModal 
-        isOpen={isDonationModalOpen} 
-        onClose={() => setIsDonationModalOpen(false)} 
-      />
-    </main>
-  );
+interface TestimonialItem {
+    id: number;
+    name: string;
+    role: string | null;
+    message: string;
+    image: string | null;
 }
+
+export default function TestimonialsPage() {
+    const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    // 2. ESTADO DEL MODAL
+    const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
+
+    const API_URL = 'http://127.0.0.1:8000/api';
+
+    useEffect(() => {
+        interface ApiTestimonial {
+            id: number;
+            name: string;
+            role?: string | null;
+            message?: string | null;
+            content?: string | null;
+            image?: string | null;
+        }
+
+        const loadTestimonials = async () => {
+            try {
+                const response = await fetch(`${API_URL}/testimonials`);
+                if (response.ok) {
+                    const data: ApiTestimonial[] = await response.json();
+                    
+                    const normalizedData: TestimonialItem[] = data.map((item) => ({
+                        id: item.id,
+                        name: item.name,
+                        role: item.role ?? 'Beneficiario',
+                        message: item.message ?? item.content ?? '',
+                        image: item.image ?? null
+                    }));
+
+                    setTestimonials(normalizedData);
+                } else {
+                    console.error("Error al obtener testimonios");
+                }
+            } catch (error) {
+                console.error("Error de conexión:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadTestimonials();
+    }, []);
+
+    return (
+        <main>
+            {/* 3. CONECTAR NAVBAR */}
+            <Navbar onOpenDonationModal={() => setIsDonationModalOpen(true)} />
+            
+            <section className="bg-celeste-claro py-20 text-center">
+                <div className="container mx-auto px-6">
+                    <h1 className="text-4xl md:text-5xl font-bold text-azul-marino font-title mb-6">
+                        Testimonios
+                    </h1>
+                    <p className="text-xl text-gray-700 max-w-3xl mx-auto font-sans">
+                        Historias reales de esperanza, lucha y superación que nos inspiran cada día.
+                    </p>
+                </div>
+            </section>
+
+            <section className="bg-white py-16">
+                <div className="container mx-auto px-6">
+                    
+                    {loading ? (
+                        <div className="text-center py-20 text-gray-500">Cargando historias...</div>
+                    ) : testimonials.length === 0 ? (
+                        <div className="text-center py-20 text-gray-500">Aún no hay testimonios registrados.</div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                            {testimonials.map((item, index) => (
+                                <motion.div 
+                                    key={item.id} 
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                                    whileHover={{ y: -10, boxShadow: "0px 20px 30px rgba(0,0,0,0.15)" }}
+                                    className="bg-beige-claro rounded-xl shadow-lg overflow-hidden flex flex-col h-full hover:shadow-2xl transition-all duration-300"
+                                >
+                                    <div className="relative w-full h-64 bg-gray-200">
+                                        {item.image ? (
+                                            <Image 
+                                                src={item.image} 
+                                                alt={item.name} 
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-500 text-6xl font-title font-bold">
+                                                {item.name.charAt(0)}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="p-8 flex flex-col flex-grow text-center relative">
+                                        <div className="text-rosa-principal text-6xl font-serif leading-none absolute -top-6 left-1/2 transform -translate-x-1/2 bg-beige-claro px-2 rounded-full">
+                                            “
+                                        </div>
+
+                                        <h3 className="text-2xl font-bold text-azul-marino font-title mt-4 mb-2">
+                                            {item.name}
+                                        </h3>
+                                        
+                                        <p className="text-turquesa-secundario font-bold text-sm uppercase mb-4 tracking-wide">
+                                            {item.role}
+                                        </p>
+
+                                        <div 
+                                            className="text-gray-700 font-sans italic mb-6 flex-grow leading-relaxed"
+                                            dangerouslySetInnerHTML={{ __html: item.message }}
+                                        />
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="mt-20 bg-azul-marino rounded-2xl p-10 md:p-16 text-white text-center">
+                        <h3 className="text-2xl md:text-3xl font-bold font-title mb-4">¿Tienes una historia que contar?</h3>
+                        <p className="mb-8 font-sans max-w-2xl mx-auto">
+                            Si has sido parte de nuestra fundación, nos encantaría conocer tu experiencia.
+                        </p>
+                        <a href="/contacto" className="bg-rosa-principal text-white px-8 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
+                            CONTÁCTANOS
+                        </a>
+                    </div>
+
+                </div>
+            </section>
+            <Quotes/>
+            <Alliances />
+            
+            {/* 4. CONECTAR FOOTER */}
+            <Footer onOpenDonationModal={() => setIsDonationModalOpen(true)} />
+
+            {/* 5. RENDERIZAR MODAL */}
+            <DonationModal 
+                isOpen={isDonationModalOpen} 
+                onClose={() => setIsDonationModalOpen(false)} 
+            />
+        </main>
+    );
+};
