@@ -8,9 +8,9 @@ import Alliances from '@/components/Alliances';
 import Contact from '@/components/Contact';
 import Subscribe from '@/components/Suscribe';
 import HowToHelp from '@/components/HowToHelp';
-import DonationModal from '@/components/DonationModal'; 
+import DonationModal from '@/components/DonationModal';
+import ProgramModal from '@/components/ProgramModal'; 
 
-// 1. Interfaz de Datos
 interface Program {
   id: number;
   title: string;
@@ -22,17 +22,16 @@ interface Program {
 const ITEMS_PER_PAGE = 6;
 
 export default function ProgramsPage() {
-    // 2. Estados de Datos
     const [programs, setPrograms] = useState<Program[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-
-    // 3. ESTADO DEL MODAL (¡Esto faltaba!)
+    
+    // Estados para los Modales
     const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
+    const [selectedProgram, setSelectedProgram] = useState<Program | null>(null); // <--- NUEVO
     
     const API_URL = 'http://127.0.0.1:8000/api';
 
-    // 4. Conexión al Backend
     useEffect(() => {
         const loadPrograms = async () => {
             try {
@@ -40,20 +39,16 @@ export default function ProgramsPage() {
                 if (response.ok) {
                     const data = await response.json();
                     setPrograms(data);
-                } else {
-                    console.error("Error al obtener programas");
                 }
             } catch (error) {
-                console.error("Error de conexión:", error);
+                console.error("Error al obtener programas", error);
             } finally {
                 setLoading(false);
             }
         };
-        
         loadPrograms();
     }, []);
 
-    // 5. Lógica de Paginación
     const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
     const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
     const currentPrograms = programs.slice(indexOfFirstItem, indexOfLastItem);
@@ -66,7 +61,6 @@ export default function ProgramsPage() {
 
     return (
         <main>
-            {/* Pasamos la función al Navbar para que el botón "Donar" del menú funcione */}
             <Navbar onOpenDonationModal={() => setIsDonationModalOpen(true)} />
             
             <section className="bg-celeste-claro py-20 text-center">
@@ -111,24 +105,26 @@ export default function ProgramsPage() {
                                                     className="object-cover absolute inset-0"
                                                 />
                                             ) : (
-                                                <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                                                    Sin Imagen
-                                                </div>
+                                                <div className="absolute inset-0 flex items-center justify-center text-gray-400">Sin Imagen</div>
                                             )}
                                         </div>
 
                                         <div className="p-6 flex flex-col flex-grow">
-                                            <h3 className="text-2xl font-bold font-title mb-4 text-black">
+                                            <h3 className="text-2xl font-bold font-title mb-4 text-black line-clamp-2">
                                                 {program.title}
                                             </h3>
                                             
-                                            <div className="mb-6 font-sans text-black flex-grow text-sm leading-relaxed">
+                                            <div className="mb-6 font-sans text-black flex-grow text-sm leading-relaxed line-clamp-4">
                                                 {program.description && (
                                                     <div dangerouslySetInnerHTML={{ __html: program.description }} />
                                                 )}
                                             </div>
 
-                                            <button className="self-start bg-rosa-principal text-white px-6 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button">
+                                            {/* BOTÓN: Abre el Modal */}
+                                            <button 
+                                                onClick={() => setSelectedProgram(program)}
+                                                className="self-start bg-rosa-principal text-white px-6 py-3 rounded-full font-bold hover:bg-amarillo-detalle transition duration-300 font-button"
+                                            >
                                                 CONOCER MÁS
                                             </button>
                                         </div>
@@ -138,43 +134,11 @@ export default function ProgramsPage() {
 
                             {totalPages > 1 && (
                                 <div className="flex justify-center mt-12 space-x-2">
-                                    <button
-                                        onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
-                                        disabled={currentPage === 1}
-                                        className={`px-4 py-2 rounded-md font-bold transition-colors ${
-                                            currentPage === 1 
-                                            ? 'text-gray-300 cursor-not-allowed' 
-                                            : 'text-azul-marino hover:bg-gray-100'
-                                        }`}
-                                    >
-                                        Anterior
-                                    </button>
-                                    
+                                    <button onClick={() => handlePageChange(Math.max(currentPage - 1, 1))} disabled={currentPage === 1} className={`px-4 py-2 rounded-md font-bold ${currentPage === 1 ? 'text-gray-300' : 'text-azul-marino hover:bg-gray-100'}`}>Anterior</button>
                                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-                                        <button
-                                            key={number}
-                                            onClick={() => handlePageChange(number)}
-                                            className={`px-4 py-2 rounded-md font-bold transition-colors ${
-                                                currentPage === number
-                                                    ? 'bg-rosa-principal text-white'
-                                                    : 'text-gray-600 hover:bg-gray-100'
-                                            }`}
-                                        >
-                                            {number}
-                                        </button>
+                                        <button key={number} onClick={() => handlePageChange(number)} className={`px-4 py-2 rounded-md font-bold ${currentPage === number ? 'bg-rosa-principal text-white' : 'text-gray-600 hover:bg-gray-100'}`}>{number}</button>
                                     ))}
-
-                                    <button
-                                        onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
-                                        disabled={currentPage === totalPages}
-                                        className={`px-4 py-2 rounded-md font-bold transition-colors ${
-                                            currentPage === totalPages 
-                                            ? 'text-gray-300 cursor-not-allowed' 
-                                            : 'text-azul-marino hover:bg-gray-100'
-                                        }`}
-                                    >
-                                        Siguiente
-                                    </button>
+                                    <button onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))} disabled={currentPage === totalPages} className={`px-4 py-2 rounded-md font-bold ${currentPage === totalPages ? 'text-gray-300' : 'text-azul-marino hover:bg-gray-100'}`}>Siguiente</button>
                                 </div>
                             )}
                         </>
@@ -182,18 +146,19 @@ export default function ProgramsPage() {
                 </div>
             </section>
 
-            {/* Pasamos la función a HowToHelp para que su botón Donar funcione */}
             <HowToHelp onOpenDonationModal={() => setIsDonationModalOpen(true)} />
-            
             <Alliances/>
             <Subscribe />
             <Contact />
             <Footer />
 
-            {/* Renderizamos el Modal al final */}
-            <DonationModal 
-                isOpen={isDonationModalOpen} 
-                onClose={() => setIsDonationModalOpen(false)} 
+            <DonationModal isOpen={isDonationModalOpen} onClose={() => setIsDonationModalOpen(false)} />
+            
+            {/* Renderizar Modal de Programa */}
+            <ProgramModal 
+                isOpen={!!selectedProgram} 
+                program={selectedProgram} 
+                onClose={() => setSelectedProgram(null)} 
             />
         </main>
     );
