@@ -17,6 +17,7 @@ import AboutUs from '@/components/AboutUs';
 import DonationModal from '@/components/DonationModal'; 
 
 
+
 const directorio = [
   { name: 'Mónica Mendez Saucedo', role: 'Presidente', image: '/IMG/equipo/directorio/MONICA-PRESIDENTE.jpeg' },
   { name: 'Mary Gloria Rengel Velasco', role: 'Vicepresidente', image: '/IMG/equipo/directorio/MARY-VICE PRESIDENTE.jpeg' },
@@ -25,20 +26,19 @@ const directorio = [
 ];
 
 const voluntarias = [
-  { name: 'Marlene Dalence', image: '/IMG/equipo/voluntarias/marlene.jpg' },
-  { name: 'Dolly Nanda', image: '/IMG/equipo/voluntarias/dolly.jpg' },
-  { name: 'Rosmery', image: '/IMG/equipo/voluntarias/rosmery.jpg' },
-  { name: 'Carola', image: '/IMG/equipo/voluntarias/carola.jpg' },
-  { name: 'Diva', image: '/IMG/equipo/voluntarias/diva.jpg' },
-  { name: 'Gaby', image: '/IMG/equipo/voluntarias/gaby.jpg' },
-  { name: 'Ma. Rene', image: '/IMG/equipo/voluntarias/maRene.jpg' },
-  { name: 'Mercedes', image: '/IMG/equipo/voluntarias/mercedes.jpg' },
-  { name: 'Rosario', image: '/IMG/equipo/voluntarias/rosario.jpg' },
-  { name: 'Sandra', image: '/IMG/equipo/voluntarias/sandra.jpg' },
-  { name: 'Susana', image: '/IMG/equipo/voluntarias/susana.jpg' },
-  { name: 'Verónica', image: '/IMG/equipo/voluntarias/veronica.jpg' },
-  { name: 'Ximena', image: '/IMG/equipo/voluntarias/ximena.jpg' },
-  { name: 'Yola', image: '/IMG/equipo/voluntarias/yola.jpg' },
+  { name: 'Dolly Nanda', image: 'https://ui-avatars.com/api/?name=Dolly+Nanda&background=random&size=200' },
+  { name: 'Rosmery', image: 'https://ui-avatars.com/api/?name=Rosmery&background=random&size=200' },
+  { name: 'Carola', image: 'https://ui-avatars.com/api/?name=Carola&background=random&size=200' },
+  { name: 'Diva', image: 'https://ui-avatars.com/api/?name=Diva&background=random&size=200' },
+  { name: 'Gaby', image: 'https://ui-avatars.com/api/?name=Gaby&background=random&size=200' },
+  { name: 'Ma. Rene', image: 'https://ui-avatars.com/api/?name=Ma+Rene&background=random&size=200' },
+  { name: 'Mercedes', image: 'https://ui-avatars.com/api/?name=Mercedes&background=random&size=200' },
+  { name: 'Rosario', image: 'https://ui-avatars.com/api/?name=Rosario&background=random&size=200' },
+  { name: 'Sandra', image: 'https://ui-avatars.com/api/?name=Sandra&background=random&size=200' },
+  { name: 'Susana', image: 'https://ui-avatars.com/api/?name=Susana&background=random&size=200' },
+  { name: 'Verónica', image: 'https://ui-avatars.com/api/?name=Veronica&background=random&size=200' },
+  { name: 'Ximena', image: 'https://ui-avatars.com/api/?name=Ximena&background=random&size=200' },
+  { name: 'Yola', image: 'https://ui-avatars.com/api/?name=Yola&background=random&size=200' },
 ];
 
 export default function AboutPage() {
@@ -78,8 +78,26 @@ export default function AboutPage() {
   return (
     <main className="overflow-x-hidden">
       {/* 4. Pasar función al Navbar */}
+      
       <Navbar onOpenDonationModal={() => setIsDonationModalOpen(true)} />
-
+        <motion.section 
+        className="relative h-80 flex items-center justify-center text-white"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        <Image src="/IMG/Equipo.jpg" alt="Fondo Quiénes Somos" layout="fill" objectFit="cover" className="-z-10 object-center" />
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <motion.h1 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+          className="text-6xl font-bold z-10 font-title"
+        >
+          Quiénes Somos
+          </motion.h1>
+      </motion.section>
+        
       <AboutUs />
 
       {/* Directorio */}
