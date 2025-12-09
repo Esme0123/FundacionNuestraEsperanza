@@ -1,13 +1,14 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion'; // Importamos Framer Motion para las animaciones
+import { motion } from 'framer-motion';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Alliances from '@/components/Alliances';
 import Contact from '@/components/Contact';
 import Subscribe from '@/components/Suscribe';
 import HowToHelp from '@/components/HowToHelp';
+import DonationModal from '@/components/DonationModal'; 
 
 // 1. Interfaz de Datos
 interface Program {
@@ -15,20 +16,23 @@ interface Program {
   title: string;
   description: string;
   image: string;
-  color: string; // Ej: "bg-celeste-fondo"
+  color: string;
 }
 
 const ITEMS_PER_PAGE = 6;
 
 export default function ProgramsPage() {
-    // 2. Estados
+    // 2. Estados de Datos
     const [programs, setPrograms] = useState<Program[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
+
+    // 3. ESTADO DEL MODAL (¡Esto faltaba!)
+    const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
     
     const API_URL = 'http://127.0.0.1:8000/api';
 
-    // 3. Conexión al Backend
+    // 4. Conexión al Backend
     useEffect(() => {
         const loadPrograms = async () => {
             try {
@@ -49,7 +53,7 @@ export default function ProgramsPage() {
         loadPrograms();
     }, []);
 
-    // 4. Lógica de Paginación
+    // 5. Lógica de Paginación
     const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
     const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
     const currentPrograms = programs.slice(indexOfFirstItem, indexOfLastItem);
@@ -62,9 +66,9 @@ export default function ProgramsPage() {
 
     return (
         <main>
-            <Navbar />
+            {/* Pasamos la función al Navbar para que el botón "Donar" del menú funcione */}
+            <Navbar onOpenDonationModal={() => setIsDonationModalOpen(true)} />
             
-            {/* Header */}
             <section className="bg-celeste-claro py-20 text-center">
                 <div className="container mx-auto px-6">
                     <h1 className="text-4xl md:text-5xl font-bold text-azul-marino font-title mb-6">
@@ -76,7 +80,6 @@ export default function ProgramsPage() {
                 </div>
             </section>
 
-            {/* Lista de Programas (DISEÑO MEJORADO) */}
             <section id="programs-list" className="bg-white py-16">
                 <div className="container mx-auto px-6">
                     
@@ -90,7 +93,6 @@ export default function ProgramsPage() {
                                 {currentPrograms.map((program, index) => (
                                     <motion.div 
                                         key={program.id}
-                                        // Animaciones idénticas a Programs.tsx
                                         initial={{ opacity: 0, y: 20 }}
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true }}
@@ -98,10 +100,8 @@ export default function ProgramsPage() {
                                         whileHover={{ y: -15, scale: 1.05, boxShadow: "0px 25px 40px rgba(0,0,0,0.15)" }}
                                         className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full border border-gray-100"
                                     >
-                                        {/* LA FRANJA DE COLOR SUPERIOR (Esto es lo que faltaba) */}
                                         <div className={`w-full h-3 ${program.color || 'bg-rosa-principal'}`}></div>
                                         
-                                        {/* Imagen con proporción correcta */}
                                         <div className="relative w-full h-0 pb-[66.66%] overflow-hidden bg-gray-200">
                                             {program.image ? (
                                                 <Image 
@@ -117,7 +117,6 @@ export default function ProgramsPage() {
                                             )}
                                         </div>
 
-                                        {/* Contenido */}
                                         <div className="p-6 flex flex-col flex-grow">
                                             <h3 className="text-2xl font-bold font-title mb-4 text-black">
                                                 {program.title}
@@ -137,7 +136,6 @@ export default function ProgramsPage() {
                                 ))}
                             </div>
 
-                            {/* Paginación */}
                             {totalPages > 1 && (
                                 <div className="flex justify-center mt-12 space-x-2">
                                     <button
@@ -184,11 +182,19 @@ export default function ProgramsPage() {
                 </div>
             </section>
 
-            <HowToHelp />
+            {/* Pasamos la función a HowToHelp para que su botón Donar funcione */}
+            <HowToHelp onOpenDonationModal={() => setIsDonationModalOpen(true)} />
+            
             <Alliances/>
             <Subscribe />
             <Contact />
             <Footer />
+
+            {/* Renderizamos el Modal al final */}
+            <DonationModal 
+                isOpen={isDonationModalOpen} 
+                onClose={() => setIsDonationModalOpen(false)} 
+            />
         </main>
     );
 };
