@@ -75,7 +75,23 @@ export default function AboutPage() {
   return (
     <main className="overflow-x-hidden">
       <Navbar />
-
+      <motion.section 
+        className="relative h-80 flex items-center justify-center text-white"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        <Image src="/IMG/Equipo.jpg" alt="Fondo Quiénes Somos" layout="fill" objectFit="cover" className="-z-10 object-center" />
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <motion.h1 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+          className="text-6xl font-bold z-10 font-title"
+        >
+          Quiénes Somos
+        </motion.h1>
+      </motion.section>
       <AboutUs />
 
       {/* Directorio */}
