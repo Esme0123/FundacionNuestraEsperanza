@@ -57,11 +57,59 @@ class BnbDonationService
     }
 
     /**
+     * Generate a unique gloss for the transaction.
+     * Format: FNE-D-{timestamp}-{random}
+     */
+    private function generateUniqueGloss()
+    {
+        return 'FNE-D-' . now()->timestamp . '-' . rand(1000, 9999);
+    }
+
+    /**
+     * Calculate expiration date based on minutes.
+     * Returns date string Y-m-d (as per original code, though spec usually allows time).
+     * For now keeping Y-m-d + 1 day as per original implementation preference.
+     */
+    private function calculateExpirationDate()
+    {
+        return now()->addDays(1)->format('Y-m-d');
+    }
+
+    /**
      * Generate a Fixed Amount QR.
      * Endpoint: /main/getQRWithImageAsync
      */
-    public function generateFixedQR($amount, $gloss)
+    public function generateFixedQR($amount, $customerGloss = null, $additionalData = null)
     {
+        // 1. Prepare Data
+        $gloss = $this->generateUniqueGloss();
+        // If the user provided a gloss (like "Donacion Campana X"), we can append it or store it in additionalData.
+        // For strict BNB requirement "Gloss", we use our unique ID to ensure tracking, 
+        // or we append the customer text if short enough.
+        $sendingGloss = $gloss . ($customerGloss ? " $customerGloss" : "");
+        $sendingGloss = substr($sendingGloss, 0, 100); // Ensure limit
+
+        $expirationDate = $this->calculateExpirationDate();
+
+        // --- MOCK MODE CHECK ---
+        if (env('BNB_MOCK_MODE', false)) {
+            Log::info('BNB Mock Mode: Generating fake QR', ['amount' => $amount]);
+            
+            // Dummy Base64 QR Image (Generic QR Placeholder)
+            $dummyQr = 'iVBORw0KGgoAAAANSUhEUgAAAJQAAACUCAYAAAB1PADUAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAAHdElNRQfmDAkRMh4f6i/IAAABxklEQVR42u3dQYrkMBBA0f9/6d67b2BEEUTYf907RERGKvqYyR/5+P1+/4fx/X6/4w/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4X/wX/gv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+C/8F/4L/4X/wn/hv/Bf+G88n88fAwD//wMAgJ+40gAAAABJRU5ErkJggg==';
+            $mockId = 'mock_' . uniqid();
+
+            // Return structure matching DB needs
+            return [
+                'success' => true,
+                'qr' => $dummyQr,
+                'qrId' => $mockId,
+                'expirationDate' => $expirationDate,
+                'gloss' => $gloss, // Return the generated gloss to controller
+                'mock' => true
+            ];
+        }
+
         $token = $this->authenticate();
 
         if (!$token) {
@@ -70,29 +118,25 @@ class BnbDonationService
 
         $url = "{$this->baseUrlSimple}/main/getQRWithImageAsync";
         
-        // Ensure amount is string formatted as needed if strict, but JSON usually handles numbers.
-        // Spec says "amount": "20" (String) in example, so we cast to string.
         $payload = [
             'currency' => 'BOB',
-            'gloss' => $gloss,
+            'gloss' => $sendingGloss,
             'amount' => (string) $amount,
-            'singleUse' => 'true', // String "true" in example
-            'expirationDate' => now()->addDays(1)->format('Y-m-d'),
+            'singleUse' => 'true',
+            'expirationDate' => $expirationDate,
+            'destinationAccountId' => '1', 
+            'additionalData' => $additionalData ?? $gloss, // Use gloss as backup tracking
         ];
 
         try {
             $response = Http::withToken($token)->post($url, $payload);
 
             if ($response->successful()) {
-                // The response is the byte array or base64 string directly? 
-                // Spec says: "El servicio devuelve un array de bytes o string Base64".
-                // We'll assume it returns a JSON with the image or the raw image.
-                // Let's assume it returns the Base64 string directly or in a field.
-                // Based on "Respuesta Clave" in spec: { "qr": "Base64...", "qrId": "..." }
-                // Wait, the spec has two sections. Section 2 says "devuelve el mismo en un array de bytes".
-                // Section 3.B says "Respuesta Clave: qr (Base64), qrId".
-                // We will return the JSON response to be safe and parse in controller.
-                return $response->json();
+                $data = $response->json();
+                // Inject our generated gloss into the response so Controller can save it
+                $data['gloss'] = $gloss; 
+                $data['success'] = true;
+                return $data;
             }
 
             Log::error('BNB Fixed QR Failed', ['body' => $response->body()]);

@@ -4,20 +4,35 @@ import React, { useState } from 'react';
 const Subscribe = () => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  // URL de tu Backend (Asegúrate que sea el correcto)
-  const API_URL = 'http://127.0.0.1:8000/api';
+  // URL de tu Backend
+  // Strip trailing slash if present to avoid double slashes
+  const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
+    setErrorMessage('');
 
     try {
-      const response = await fetch(`${API_URL}/subscribe`, {
+      const response = await fetch(`${API_BASE}/api/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
+
+      const contentType = response.headers.get("content-type");
+      let data: { message?: string } = {};
+      
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await response.json();
+      } else {
+        // Handle non-JSON response (e.g. 404 HTML or 500 Error page)
+        if (!response.ok) {
+             throw new Error(`Error del servidor: ${response.status}`);
+        }
+      }
 
       if (response.ok) {
         setStatus('success');
@@ -26,10 +41,12 @@ const Subscribe = () => {
       } else {
         // Si el correo ya existe (error 422), marcamos error
         setStatus('error');
+        setErrorMessage(data.message || 'Verifica el correo o intenta de nuevo.');
       }
     } catch (error) {
       console.error(error);
       setStatus('error');
+      setErrorMessage('Error de conexión.');
     }
   };
 
@@ -61,7 +78,7 @@ const Subscribe = () => {
             {status === 'loading' ? '...' : status === 'success' ? '¡LISTO!' : status === 'error' ? 'ERROR' : 'SUSCRIBIRME'}
           </button>
         </form>
-        {status === 'error' && <p className="text-red-500 mt-2 text-sm">Error: Verifica el correo o intenta de nuevo.</p>}
+        {status === 'error' && <p className="text-red-500 mt-2 text-sm">Error: {errorMessage}</p>}
       </div>
     </section>
   );

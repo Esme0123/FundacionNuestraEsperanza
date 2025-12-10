@@ -52,7 +52,10 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenDonationModal = () => { } }) => {
                 Hola, {user?.name?.split(' ')[0]} {/* Muestra el primer nombre */}
               </Link>
               <button
-                onClick={logout}
+                onClick={() => {
+                  window.location.href = '/';
+                  setTimeout(() => logout(), 100);
+                }}
                 className="text-white border border-white rounded-full px-6 py-2 hover:bg-white hover:text-azul-marino transition duration-300 font-button"
               >
                 Salir
@@ -109,8 +112,9 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenDonationModal = () => { } }) => {
                 </Link>
                 <button
                   onClick={() => {
-                    logout();
                     setIsMenuOpen(false);
+                    window.location.href = '/';
+                    setTimeout(() => logout(), 100);
                   }}
                   className="text-white hover:text-rosa-principal transition duration-300"
                 >

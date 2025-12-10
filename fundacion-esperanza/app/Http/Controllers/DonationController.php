@@ -27,8 +27,8 @@ class DonationController extends Controller
 
         // 2. Load all donations for the donor, eager loading certificate and currency
         $donations = $donor->donations()
-            ->with(['certificate', 'currency']) 
-            ->where('status', 'succeeded') // Only successful donations
+            ->with(['certificate', 'currency', 'qr']) 
+            ->whereIn('status', ['succeeded', 'paid']) // Only successful donations
             ->orderBy('date', 'desc')
             ->get();
 

@@ -33,12 +33,16 @@ export default function LoginPage() {
 
     try {
       // 1. Solicitar CSRF Cookie (Protección de Laravel)
-      await fetch(`${API_URL}/sanctum/csrf-cookie`, { method: 'GET' });
+      await fetch(`${API_URL}/sanctum/csrf-cookie`, { 
+          method: 'GET',
+          credentials: 'include', // <--- Importante para guardar la cookie
+      });
       const xsrfToken = getCookie('XSRF-TOKEN');
 
       // 2. Intentar Login
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
+        credentials: 'include', // <--- Importante para enviar cookies de sesión
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -49,11 +53,41 @@ export default function LoginPage() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        login(data.user, data.token); 
+      if (!response.ok) {
+        // Error de Laravel (ej. credenciales incorrectas)
+        setError(data.message || 'Error al iniciar sesión.');
+        setIsLoading(false);
+        return;
+      }
+
+      // --- ¡ÉXITO! ---
+      // La respuesta del backend es: { message: "...", data: { user: {...}, token: "..." } }
+      // Por lo tanto, 'data' aquí contiene todo el JSON. Accedemos a data.data
+      const responseData = data.data;
+
+      if (responseData && responseData.user && responseData.token) {
+        login(responseData.user, responseData.token); // Usamos la función del AuthContext
         
-        // Redirigir según el rol (opcional, por ahora al perfil o home)
-        router.push('/perfil'); 
+        // Check for redirect param
+        // Note: For client component we can use window.location or searchParams if we wrap in Suspense. Only checking query manually here might be tricky if not using useSearchParams.
+        // Let's rely on checking URL directly if necessary or use window.location.search
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirect = urlParams.get('redirect');
+        
+        if (redirect === 'back') {
+             router.back(); // If logic was purely history based
+             // But usually we might want to go to a specific page.
+             // If we saved state in localStorage, 'back' (meaning reloading the page that sent us here) is usually okay IF that page reads localStorage.
+             // But router.back() might not reload.
+             // Let's assume the user came from /programas. 
+             // Ideally we should pass the full path.
+             // But for now, let's just go back.
+             router.back();
+        } else if (redirect) {
+            router.push(redirect);
+        } else {
+            router.push('/perfil'); // Redirigimos al perfil del usuario
+        }
       } else {
         setError(data.message || 'Credenciales incorrectas');
       }

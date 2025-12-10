@@ -29,10 +29,21 @@ class DonationResource extends JsonResource
                     return [
                         'folio' => $this->certificate->folio,
                         'download_link' => route('certificates.download', ['uuid' => $this->certificate->folio]),
-                        'issued_on' => $this->certificate->issued_on->format('Y-m-d H:i:s'),
+                        'issued_on' => $this->certificate->issued_on ? $this->certificate->issued_on->format('Y-m-d H:i:s') : null,
                     ];
                 }
                 return null;
+            }),
+            'certificate_url' => $this->whenLoaded('certificate', function () {
+                return $this->certificate ? route('certificates.download', ['uuid' => $this->certificate->folio]) : null;
+            }),
+
+            // QR transformation
+            'qr' => $this->whenLoaded('qr', function () {
+                return $this->qr ? [
+                    'code' => $this->qr->code ?? $this->qr->id, // Fallback if code is missing
+                    'image' => $this->qr->image,
+                ] : null;
             }),
         ];
     }

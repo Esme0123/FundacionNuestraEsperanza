@@ -5,8 +5,9 @@ import { motion } from 'framer-motion';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DonationModal from "@/components/DonationModal";
+import DonationForm from "@/components/DonationForm";
 import Alliances from "@/components/Alliances";
-import HowToHelp from '@/components/HowToHelp'; // Importado por si decides usarlo aquí también
+import HowToHelp from '@/components/HowToHelp'; 
 
 const HelpPage = () => {
   // 1. Estado para controlar el Modal
@@ -32,7 +33,7 @@ const HelpPage = () => {
                 alt="Fondo Cómo Ayudar" 
                 fill 
                 className="object-cover object-center"
-                priority // Carga rápida para el LCP
+                priority 
              />
              <div className="absolute inset-0 bg-black/50 z-10"></div>
           </div>
@@ -95,7 +96,7 @@ const HelpPage = () => {
                 </div>
                 <div className="relative h-80 w-full rounded-xl overflow-hidden shadow-2xl">
                     <Image 
-                        src="/IMG/voluntariado.jpg" // Asegúrate de tener esta imagen
+                        src="/IMG/Donación .jpg" // Asegúrate de tener esta imagen
                         alt="Donación" 
                         fill
                         className="object-cover"
@@ -105,7 +106,8 @@ const HelpPage = () => {
         </section>
 
         <HowToHelp onOpenDonationModal={() => setIsDonationModalOpen(true)} />
-              <section className="bg-beige-claro py-16 md:py-20">
+        
+        <section className="bg-beige-claro py-16 md:py-20">
           <div className="container mx-auto px-6">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -121,7 +123,6 @@ const HelpPage = () => {
                 { title: 'Alianzas', description: 'Tu empresa puede ser un aliado estratégico.', image: '/IMG/help.jpeg' },
                 { title: 'En Especie', description: 'Aceptamos con gratitud alimentos no perecederos, artículos de higiene y artículos de limpieza.', image: '/IMG/Events/rifaSolidaria.jpg' },
                 { title: 'Eventos', description: 'Participa y apoya nuestros eventos de recaudación.', image: '/IMG/Events/Navidad0.jpg' }
-                // { title: 'Corte Solidario: ¡Haz la Diferencia!', description: 'Únete a nuestros eventos y dona tu cabello para transformar vidas. Cada mecha cuenta. ¡Participa y apoya a quienes más lo necesitan!', image: '/IMG/Events/carreraPedestre.jpg' }
               ].map((item, index) => (
                 <motion.div
                   key={index}
@@ -144,6 +145,7 @@ const HelpPage = () => {
             </div>
           </div>
         </section>
+
         {/* Redes Sociales */}
         <section className="bg-rosa-principal py-16 text-white text-center">
           <div className="container mx-auto px-6">
@@ -155,21 +157,48 @@ const HelpPage = () => {
             >
               DIFUNDE LA VOZ
             </motion.h2>
-            <p className="text-lg mb-8 max-w-2xl mx-auto font-sans">
-              Síguenos en nuestras redes sociales y comparte nuestras historias. 
-              Ayúdanos a llegar a más corazones generosos.
-            </p>
             
-            <div className="flex justify-center gap-8">
-                <a href="https://www.facebook.com/NuestraEsperanzaBo/?locale=es_LA" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform">
-                    <Image src="/IMG/ic_facebook.png" alt='Facebook' width={50} height={50} className="bg-white rounded-full p-1" />
-                </a>
-                <a href="https://www.tiktok.com/@fund.nuestra.esperanza" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform">
-                    <Image src="/IMG/ic_tiktok.png" alt='TikTok' width={50} height={50} className="bg-white rounded-full p-1" />
-                </a>
-                <a href="https://www.instagram.com/fundacionnuestraesperanza" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform">
-                    <Image src="/IMG/ic_instagram.png" alt='Instagram' width={50} height={50} className="bg-white rounded-full p-1" />
-                </a>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="font-sans text-base md:text-lg mb-8"
+            >
+              Una simple acción puede generar una ola de esperanza. Comparte nuestra misión y ayúdanos a llegar a más corazones.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="flex justify-center space-x-6"
+            >
+              <a href="https://www.facebook.com/NuestraEsperanzaBo/?locale=es_LA" className="text-4xl hover:scale-125 transition-transform">
+                <Image
+                  src="/IMG/ic_facebook.png" alt='Facebook' width={50} height={50}
+                /></a>
+              <a href="https://www.tiktok.com/@fund.nuestra.esperanza?_t=ZM-90VE1jzCdp5&_r=1 " className='text-4xl hover:scale-125 transition-transform'>
+                <Image
+                  src="/IMG/ic_tiktok.png" alt='TikTok' width={50} height={50}
+                /></a>
+              <a href="https://www.instagram.com/fundacionnuestraesperanza/?hl=es-la" className='text-4xl hover:scale-125 transition-transform'>
+                <Image
+                  src="/IMG/ic_instagram.png" alt='Instagram' width={50} height={50}
+                /></a>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* SECTION: BNB Donation Form for Demo */}
+        <section className="bg-gray-50 py-16 text-center">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-azul-marino mb-8 font-title">
+              Haz una Donación con QR (BNB)
+            </h2>
+            <div className="flex justify-center">
+               {/* Standalone DonationForm */}
+              <DonationForm />
             </div>
           </div>
         </section>

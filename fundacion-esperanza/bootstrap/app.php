@@ -39,13 +39,15 @@ return Application::configure(basePath: dirname(__DIR__))
             //'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
             'role' => \App\Http\Middleware\EnsureRole::class,
         ]);
+
         $middleware->validateCsrfTokens(except: [
-            'api/*',  
+            '/api/public/*',
+            '/api/webhooks/*',
+            '/api/subscribe',
+            '/api/contact',
             'stripe/*',
-            'http://127.0.0.1:8000/api/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // Configuración de manejo de excepciones.
     })->create();
-

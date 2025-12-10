@@ -37,51 +37,102 @@ class PublicDonationController extends Controller
         $request->validate([
             'tier_id' => 'nullable|exists:donation_tiers,id',
             'custom_amount' => 'nullable|numeric|min:1',
+            'is_anonymous' => 'boolean',
+            'donor_name' => 'nullable|required_if:is_anonymous,false|string|max:100',
+            'donor_ci' => 'nullable|string|max:20',
+            'donor_phone' => 'nullable|string|max:30',
         ]);
 
         $amount = 0;
-        $gloss = "Donacion Web";
+        $glossBase = "Donacion Web";
+        $customerGloss = "";
 
         if ($request->tier_id) {
             $tier = DonationTier::find($request->tier_id);
             $amount = $tier->amount;
-            $gloss = "Donacion: " . $tier->label;
+            $glossBase = "Donacion: " . $tier->label;
         } elseif ($request->custom_amount) {
             $amount = $request->custom_amount;
-            $gloss = "Donacion Libre";
+            $glossBase = "Donacion Libre";
         } else {
             return response()->json(['message' => 'Amount or Tier required'], 400);
         }
 
-        try {
-            // Logic: If amount > 0, use Fixed QR. If amount is 0 (shouldn't happen with validation min:1), use Variable.
-            // But user spec says: "If custom_amount > 0, use that."
-            // Also spec says: "Method generateVariableQR... First, try calling generateFixedQR passing amount = 0."
-            // But here we are in requestQr where we usually have a specific amount from the user.
-            // If the user selects "Other Amount" and types 100, we send 100.
-            // If the user wants to decide LATER (variable), we might support that, but the UI flow suggests they pick an amount.
-            // Let's assume for now we always have an amount unless we add a specific "Open Amount" button.
-            
-            $response = $this->bnbService->generateFixedQR($amount, $gloss);
+        // Logic for Donor Identity
+        $donorName = "Anónimo";
+        $donorId = null; // Capture ID
+        
+        if (!$request->boolean('is_anonymous') && $request->donor_name) {
+            $donorName = $request->donor_name;
+            $customerGloss = $donorName;
 
-            if (!$response) {
+            $user = $request->user('sanctum');
+            
+            // Data for update/create
+            $donorData = [
+                'first_name' => $donorName, 
+                'phone' => $request->donor_phone,
+                'identity_document' => $request->donor_ci
+            ];
+
+            if ($user) {
+                $donorData['email'] = $user->email;
+                $donorData['user_id'] = $user->id;
+                
+                $donor = \App\Models\Donor::updateOrCreate(
+                    ['user_id' => $user->id],
+                    $donorData
+                );
+            } else {
+                // Guest Donor logic
+                // Since 'email' is required in the database but we don't collect it here,
+                // we'll generate a placeholder email to satisfy the constraint.
+                // We trust identity_document/phone for identification in this case.
+                $donorData['email'] = 'guest_' . uniqid() . '@no-email.com'; 
+                
+                $donor = \App\Models\Donor::create($donorData);
+            }
+            
+            $donorId = $donor->id;
+        }
+
+        try {
+            // Generate an internal reference ID for tracking
+            $internalId = uniqid('don_', true);
+
+            // Generate QR
+            // We pass $customerGloss to be included in the BNB Gloss if possible
+            $response = $this->bnbService->generateFixedQR($amount, $glossBase, $internalId);
+
+            if (!$response || !isset($response['success'])) {
                 return response()->json(['message' => 'Error communicating with Payment Gateway'], 503);
             }
 
-            // Save QR record
+            // Save QR record with enhanced fields
             $qr = Qr::create([
                 'amount' => $amount,
                 'status' => 'generated',
                 'bnb_blob' => json_encode($response),
-                'expiration_date' => now()->addDays(1),
-                'url' => $response['qr'] ?? null, // Base64 image
+                'expiration_date' => $response['expirationDate'] ?? now()->addDays(1),
+                'url' => $response['qr'] ?? null,
                 'code' => $response['qrId'] ?? null,
+                'external_qr_id' => $response['qrId'] ?? null,
+                'gloss' => $response['gloss'] ?? $glossBase,
+                'donor_name' => $donorName, 
+                'donor_id' => $donorId, // <--- SAVED LINK
             ]);
+            
+            // If identified, we might want to link this QR to a user/donor?
+            // The Qr model currently doesn't have donor_id, but the Donation model does.
+            // When the payment is webhooked, we usually create the Donation then.
+            // But we need to know who it was. 
+            // We are saving donor_name in QR, so we can use that to create the Donation later.
 
             return response()->json([
                 'qr_image' => $response['qr'] ?? null,
                 'qr_id' => $response['qrId'] ?? null,
                 'expiration' => now()->addDays(1)->toIso8601String(),
+                'mock' => $response['mock'] ?? false // Pass mock flag for frontend simulation
             ]);
 
         } catch (\Exception $e) {

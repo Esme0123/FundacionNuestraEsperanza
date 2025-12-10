@@ -35,7 +35,7 @@ export default function RootLayout({
     <html lang="en" className={
       `${mPlus.variable} ${surfer.variable} ${gluten.variable}`
     }>
-      <body>
+      <body suppressHydrationWarning={true}>
         <AuthProvider>
           <AOSInitializer />
           {children}

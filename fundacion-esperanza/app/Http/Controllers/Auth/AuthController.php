@@ -100,6 +100,7 @@ class AuthController extends Controller
                     'name' => $user->name,
                     'last_name' => $user->last_name,
                     'email' => $user->email,
+                    'ci' => $user->ci,
                     'roles' => $user->roles()->pluck('name'),
                 ],
             ],
@@ -116,6 +117,7 @@ class AuthController extends Controller
                 'name' => $u->name,
                 'last_name' => $u->last_name,
                 'email' => $u->email,
+                'ci' => $u->ci,
                 'roles' => $u->roles()->pluck('name'),
             ],
         ]);
@@ -155,6 +157,32 @@ class AuthController extends Controller
             ]);
 
             return response()->json(['message' => 'Internal error changing password'], 500);
+        }
+    }
+    public function updateProfile(Request $request)
+    {
+        try {
+            $user = $request->user();
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'last_name' => 'nullable|string|max:255',
+                'email' => 'required|email|unique:users,email,' . $user->id,
+                'phone' => 'nullable|string|max:20', // Add phone if useful, though not strictly requested, good for donors
+                'ci' => 'nullable|string|max:20',
+            ]);
+
+            $user->update($validated);
+
+            return response()->json([
+                'message' => 'Perfil actualizado correctamente',
+                'data' => $user
+            ]);
+        } catch (\Throwable $e) {
+             Log::error('Error updating profile', [
+                'user_id' => $request->user()->id ?? null,
+                'exception' => $e,
+            ]);
+            return response()->json(['message' => 'Error al actualizar el perfil'], 500);
         }
     }
 }

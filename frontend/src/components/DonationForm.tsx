@@ -1,200 +1,432 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import { donationService, DonationTier, QrResponse } from '@/services/donationService';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import NextImage from 'next/image';
 
-interface DonationTier {
-    id: number;
-    amount: string;
-    label: string;
-    currency_id: number;
+interface DonationFormProps {
+    onClose?: () => void;
+    isInModal?: boolean;
 }
 
-interface QrResponse {
-    qr_image: string;
-    qr_id: string;
-    expiration: string;
-}
+const DonationForm: React.FC<DonationFormProps> = ({ onClose, isInModal = false }) => {
+    const { user } = useAuth();
+    const router = useRouter();
 
-const DonationForm = () => {
+    // States for Multi-step Flow
+    const [step, setStep] = useState<'amount' | 'identity' | 'details' | 'qr' | 'success'>('amount');
+    
+    // Data States
     const [tiers, setTiers] = useState<DonationTier[]>([]);
     const [selectedTier, setSelectedTier] = useState<number | null>(null);
     const [customAmount, setCustomAmount] = useState<string>('');
+    const [isAnonymous, setIsAnonymous] = useState(true);
+    
+    // Donor Details
+    const [donorName, setDonorName] = useState('');
+    const [donorCi, setDonorCi] = useState('');
+    const [donorPhone, setDonorPhone] = useState('');
+    
+    // QR & Status
     const [loading, setLoading] = useState(false);
     const [qrData, setQrData] = useState<QrResponse | null>(null);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [error, setError] = useState<string | null>(null); // Se mantiene por si lo usas luego
+    const [error, setError] = useState<string | null>(null);
     const [status, setStatus] = useState<string | null>(null);
+    const [simulating, setSimulating] = useState(false);
 
-    // 1. Definimos la URL aquí para que esté disponible en todo el componente
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
-
-    // 2. Cargar opciones al iniciar (useEffect corregido)
+    // Initial Options
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-                const res = await fetch(`${API_URL}/api/public/donation-options`);
-                if (res.ok) {
-                    const data = await res.json();
-                    setTiers(data);
-                }
+                const data = await donationService.getOptions();
+                setTiers(data);
+                // if (data.length > 0) setSelectedTier(data[0].id); // Default select first - REMOVED per user request
             } catch (err) {
                 console.error("Failed to fetch donation tiers", err);
+                // Fallback defaults if API fails
+                setTiers([
+                    { id: 1, amount: "50", label: "Donación", currency_id: 1 },
+                    { id: 2, amount: "100", label: "Gran Ayuda", currency_id: 1 },
+                    { id: 3, amount: "200", label: "Padrino", currency_id: 1 },
+                ]);
             }
         };
         fetchOptions();
-    }, [API_URL]);
+    }, []);
 
-    // 3. Función handleDonate (MOVIDA AFUERA DEL USEEFFECT para que funcione)
-    const handleDonate = async () => {
+    // Restore pending donation after login
+    useEffect(() => {
+        const pending = localStorage.getItem('pendingDonation');
+        if (pending && user) {
+            try {
+                const { tier, amount } = JSON.parse(pending);
+                if (tier) setSelectedTier(tier);
+                if (amount) setCustomAmount(amount);
+                setStep('details');
+                localStorage.removeItem('pendingDonation');
+            } catch (e) {
+                console.error("Error parsing pending donation", e);
+            }
+        }
+    }, [user]);
+
+    // Pre-fill user data
+    useEffect(() => {
+        if (user) {
+            if (user.name) setDonorName(user.name);
+        }
+    }, [user]);
+
+    // Polling for status
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        const POLLING_TIMEOUT = 15 * 60 * 1000;
+        const startTime = Date.now();
+
+        if (step === 'qr' && qrData && qrData.qr_id && status !== 'paid') {
+            interval = setInterval(async () => {
+                if (Date.now() - startTime > POLLING_TIMEOUT) {
+                    clearInterval(interval);
+                    setError("El tiempo de espera ha expirado. Por favor genera un nuevo QR.");
+                    return;
+                }
+                try {
+                    const data = await donationService.checkStatus(qrData.qr_id);
+                    if (data.status === 'paid' || data.status === '2') {
+                        setStatus('paid');
+                        setStep('success');
+                        clearInterval(interval);
+                    }
+                } catch (err) {
+                    console.error("Polling error", err);
+                }
+            }, 5000);
+        }
+        return () => clearInterval(interval);
+    }, [step, qrData, status]);
+
+    // --- Handlers ---
+
+    const handleAmountSelect = () => {
+        setError(null);
+        if (!selectedTier && (!customAmount || parseFloat(customAmount) <= 0)) {
+            setError("Por favor selecciona un monto o introduce uno válido.");
+            return;
+        }
+        setStep('identity');
+    };
+
+    const handleIdentitySelect = (anonymous: boolean) => {
+        setIsAnonymous(anonymous);
+        
+        if (anonymous) {
+            generateQr(true);
+        } else {
+            if (!user) {
+                const state = {
+                    tier: selectedTier,
+                    amount: customAmount
+                };
+                localStorage.setItem('pendingDonation', JSON.stringify(state));
+                // Use window.location as fallback if router behaviour is inconsistent
+                router.push('/login?redirect=back'); 
+                return;
+            }
+            setStep('details');
+        }
+    };
+
+    const submitDetails = () => {
+        if (!donorName.trim() || !donorCi.trim() || !donorPhone.trim()) {
+            setError("Por favor completa todos los campos.");
+            return;
+        }
+        generateQr(false);
+    };
+
+    const generateQr = async (anonymous: boolean) => {
         setLoading(true);
         setError(null);
         setQrData(null);
-
-        // Determinar el monto (si seleccionó un botón o escribió un monto)
-        let amountToSend = customAmount;
-        if (selectedTier !== null) {
-            const tier = tiers.find(t => t.id === selectedTier);
-            if (tier) amountToSend = tier.amount;
-        }
-
-        if (!amountToSend) {
-            alert("Por favor selecciona un monto");
-            setLoading(false);
-            return;
-        }
-
+        
         try {
-            const res = await fetch(`${API_URL}/api/public/request-qr`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    amount: amountToSend,
-                    currency_id: 2, 
-                    email: "donante.anonimo@ejemplo.com" // Puedes agregar un input para esto luego si quieres
-                })
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                setQrData(data); // Guardamos la imagen del QR
-                setStatus('pending');
+            let res: QrResponse;
+            const details = anonymous ? undefined : { name: donorName, ci: donorCi, phone: donorPhone };
+            
+            if (selectedTier) {
+                res = await donationService.requestQr(selectedTier, undefined, anonymous, details);
             } else {
-                console.error("Error solicitando QR");
-                alert("Error al generar el QR. Intenta nuevamente.");
+                res = await donationService.requestQr(undefined, parseFloat(customAmount), anonymous, details);
             }
-        } catch (error) {
-            console.error(error);
-            alert("Error de conexión");
+            
+            setQrData(res);
+            setStep('qr');
+
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "Ocurrió un error inesperado al generar el QR.";
+            setError(message);
+            setStep('amount');
         } finally {
             setLoading(false);
         }
     };
 
-    // 4. Polling para verificar si ya pagó (Lógica de estado)
-    useEffect(() => {
-        let interval: NodeJS.Timeout;
-
-        if (qrData && status === 'pending') {
-            interval = setInterval(async () => {
-                try {
-                    const res = await fetch(`${API_URL}/api/public/check-status/${qrData.qr_id}`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data.status === 'paid' || data.status === 'succeeded') {
-                            setStatus('success');
-                            clearInterval(interval);
-                            alert("¡Gracias por tu donación!");
-                        }
-                    }
-                } catch (error) {
-                    console.error("Error verificando estado", error);
-                }
-            }, 5000); // Revisa cada 5 segundos
+    const handleSimulatePayment = async () => {
+        if (!qrData || simulating) return;
+        setSimulating(true);
+        try {
+            await donationService.simulatePayment(qrData.qr_id, isAnonymous ? "Donante Anónimo" : donorName);
+        } catch (err) {
+            console.error("Simulation failed", err);
+            setError("Error simulando el pago.");
+        } finally {
+            setSimulating(false);
         }
+    };
 
-        return () => clearInterval(interval);
-    }, [qrData, status, API_URL]);
+    const resetFlow = () => {
+        setStep('amount');
+        setStatus(null);
+        setQrData(null);
+        // Keep selection/input as is for generic reset, or clear it?
+        // Let's keep defaults
+        if (!user) {
+            setDonorName('');
+            setDonorCi('');
+            setDonorPhone('');
+        }
+        // If in modal, maybe close instead of reset?
+        // if (isInModal && onClose) onClose();
+    };
 
+    // --- Renders ---
+
+    if (step === 'success') {
+        return (
+            <div className={`text-center p-8 bg-green-50 rounded-xl shadow-md animate-fade-in ${isInModal ? '' : 'max-w-md mx-auto'}`}>
+                <h2 className="text-3xl font-bold text-green-700 mb-4 font-title">¡Gracias por tu donación!</h2>
+                <p className="text-gray-700 font-sans mb-6">Tu aporte ha sido recibido exitosamente.</p>
+                { !isAnonymous && (
+                    <div className="mb-6">
+                        <p className="text-sm text-gray-500 mb-2">Hemos generado tu certificado.</p>
+                        <a 
+                            href="/perfil" 
+                            className="text-rosa-principal font-bold hover:underline"
+                        >
+                            Ver en mi Historial
+                        </a>
+                    </div>
+                )}
+                <div className="flex flex-col gap-3">
+                    <button
+                        onClick={resetFlow}
+                        className="px-6 py-3 bg-green-600 text-white rounded-full font-bold hover:bg-green-700 transition font-button"
+                    >
+                        Realizar otra donación
+                    </button>
+                    {isInModal && onClose && (
+                         <button onClick={onClose} className="text-gray-500 text-sm hover:underline">Cerrar</button>
+                    )}
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full mx-auto">
-            <h3 className="text-2xl font-bold text-azul-marino mb-6 text-center font-title">
-                Selecciona tu aporte
-            </h3>
-
-            {/* Grid de botones de montos */}
-            <div className="grid grid-cols-3 gap-3 mb-6">
-                {tiers.map((tier) => (
-                    <button
-                        key={tier.id}
-                        onClick={() => {
-                            setSelectedTier(tier.id);
-                            setCustomAmount(''); // Limpia el monto manual si selecciona botón
-                        }}
-                        className={`py-3 px-2 rounded-lg border-2 font-bold transition-all ${
-                            selectedTier === tier.id
-                                ? 'border-rosa-principal bg-rosa-principal text-white'
-                                : 'border-gray-200 text-gray-600 hover:border-rosa-principal'
-                        }`}
-                    >
-                        Bs {tier.amount}
-                    </button>
-                ))}
+        <div className={`bg-white p-6 md:p-8 rounded-xl ${isInModal ? '' : 'shadow-xl max-w-md mx-auto'}`}>
+            {/* Header */}
+            <div className="relative mb-6 text-center">
+                 {isInModal && onClose && (
+                    <button onClick={onClose} className="absolute -top-2 -right-2 text-gray-400 hover:text-gray-800 text-2xl">&times;</button>
+                )}
+                <h2 className="text-3xl font-bold text-azul-marino font-title">
+                    {step === 'amount' && "Elige tu Aporte"}
+                    {step === 'identity' && "¿Cómo deseas donar?"}
+                    {step === 'details' && "Tus Datos"}
+                    {step === 'qr' && "Escanea el QR"}
+                </h2>
             </div>
 
-            {/* Input de monto personalizado */}
-            <div className="mb-6 relative">
-                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-bold">Bs</span>
-                <input
-                    type="number"
-                    placeholder="Otro monto"
-                    value={customAmount}
-                    onChange={(e) => {
-                        setCustomAmount(e.target.value);
-                        setSelectedTier(null); // Desmarca los botones si escribe manual
-                    }}
-                    className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-turquesa-secundario transition"
-                />
-            </div>
+            {/* Error */}
+            {error && <p className="text-red-500 text-sm mb-4 text-center font-sans bg-red-50 p-2 rounded">{error}</p>}
 
-            {/* Botón de Donar */}
-            {!qrData && (
-                <button
-                    onClick={handleDonate}
-                    disabled={loading}
-                    className="w-full py-3 bg-azul-marino text-white font-bold rounded-full hover:bg-opacity-90 transition disabled:bg-gray-400 font-button"
-                >
-                    {loading ? 'Generando QR...' : 'Donar Ahora'}
-                </button>
-            )}
-
-            {/* Visualización del QR */}
-            {qrData && (
-                <div className="mt-6 text-center animate-fade-in">
-                    <p className="text-sm text-gray-600 mb-2 font-sans">Escanea el QR desde tu app bancaria:</p>
-                    <div className="flex justify-center mb-4">
-                        {/* Usamos img normal para evitar problemas de configuración de dominios externos en build */}
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                            src={`data:image/png;base64,${qrData.qr_image}`}
-                            alt="QR de Pago"
-                            className="border-4 border-white shadow-lg rounded-lg"
-                            style={{ maxWidth: '250px' }}
-                        />
+            {/* STEP 1: AMOUNT */}
+            {step === 'amount' && (
+                <div className="animate-fade-in">
+                    <div className="flex justify-center space-x-3 mb-6">
+                        {tiers.map((tier) => (
+                            <button
+                                key={tier.id}
+                                onClick={() => { setSelectedTier(tier.id); setCustomAmount(''); }}
+                                className={`px-4 py-3 rounded-full font-bold text-lg transition-all transform duration-300 font-sans ${
+                                    selectedTier === tier.id
+                                        ? 'bg-rosa-principal text-white scale-110 shadow-lg'
+                                        : 'bg-gray-100 text-gray-700 hover:bg-rosa-claro'
+                                }`}
+                            >
+                                {tier.amount} Bs
+                            </button>
+                        ))}
                     </div>
                     
-                    {status === 'success' ? (
-                        <div className="bg-green-100 text-green-700 p-4 rounded-lg">
-                            <p className="font-bold">¡Donación Recibida!</p>
-                            <p className="text-sm">Gracias por tu ayuda.</p>
-                        </div>
-                    ) : (
-                        <>
-                            <p className="text-xs text-gray-500 font-sans">Esperando confirmación de pago...</p>
-                            <div className="mt-2 flex justify-center">
-                                <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-rosa-principal"></div>
-                            </div>
-                        </>
+                    <div className="mb-6">
+                        <input
+                            type="number"
+                            value={customAmount}
+                            onChange={(e) => { 
+                                setCustomAmount(e.target.value); 
+                                setSelectedTier(null); // Deselect tier immediately when typing
+                            }}
+                            placeholder="Otro monto (Bs)"
+                            className="w-full p-3 text-center rounded-full border-2 border-gray-300 focus:border-rosa-principal focus:ring-rosa-principal font-sans outline-none transition"
+                        />
+                    </div>
+
+                    <button
+                        onClick={handleAmountSelect}
+                        className="w-full py-4 bg-verde-lima text-white font-bold rounded-full text-xl hover:bg-verde-lima-claro transition duration-300 font-button shadow-md"
+                    >
+                        CONTINUAR DONACIÓN
+                    </button>
+                    {!isInModal && (
+                        <p className="text-xs text-gray-400 text-center mt-4">Tu donación es segura y directa.</p>
                     )}
+                </div>
+            )}
+
+            {/* STEP 2: IDENTITY */}
+            {step === 'identity' && (
+                <div className="flex flex-col gap-4 animate-fade-in">
+                    <button
+                        onClick={() => handleIdentitySelect(false)}
+                        className="w-full py-4 bg-rosa-principal text-white font-bold rounded-xl hover:bg-opacity-90 transition flex items-center justify-center gap-3 shadow-md"
+                    >
+                        <span className="text-2xl">📝</span> 
+                        <div className="text-left">
+                            <div className="text-lg leading-tight">Quiero identificarme</div>
+                            <div className="text-xs opacity-90 font-normal">Recibiré certificado de donación</div>
+                        </div>
+                    </button>
+                    
+                    { !user && (
+                        <button
+                            onClick={() => handleIdentitySelect(true)}
+                            className="w-full py-4 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition flex items-center justify-center gap-3"
+                        >
+                            <span className="text-2xl">🕵️</span> 
+                            <div className="text-left">
+                                <div className="text-lg leading-tight">Donar Anónimamente</div>
+                                <div className="text-xs opacity-80 font-normal">Sin certificado</div>
+                            </div>
+                        </button>
+                    ) }
+
+                    <button 
+                        onClick={() => setStep('amount')}
+                        className="text-sm text-gray-400 mt-2 hover:text-gray-600 underline"
+                    >
+                        ← Volver a elegir monto
+                    </button>
+                </div>
+            )}
+
+            {/* STEP 3: DETAILS */}
+            {step === 'details' && (
+                <div className="animate-fade-in">
+                    <div className="space-y-4 mb-8">
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 ml-1 mb-1">Nombre Completo</label>
+                            <input
+                                type="text"
+                                value={donorName}
+                                onChange={(e) => setDonorName(e.target.value)}
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-rosa-principal outline-none"
+                                placeholder="Ej: Juan Pérez"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 ml-1 mb-1">CI / Documento ID</label>
+                            <input
+                                type="text"
+                                value={donorCi}
+                                onChange={(e) => setDonorCi(e.target.value)}
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-rosa-principal outline-none"
+                                placeholder="Ej: 8462015 LP"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 ml-1 mb-1">Celular</label>
+                            <input
+                                type="text"
+                                value={donorPhone}
+                                onChange={(e) => setDonorPhone(e.target.value)}
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-rosa-principal outline-none"
+                                placeholder="Ej: 777123456"
+                            />
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={submitDetails}
+                        disabled={loading}
+                        className="w-full py-4 bg-azul-marino text-white font-bold rounded-full hover:bg-opacity-90 transition disabled:bg-gray-400 font-button text-lg"
+                    >
+                        {loading ? 'Generando...' : 'GENERAR QR'}
+                    </button>
+                    
+                    <button 
+                        onClick={() => setStep('identity')}
+                        disabled={loading}
+                        className="w-full text-center text-sm text-gray-400 mt-4 hover:underline"
+                    >
+                        ← Volver
+                    </button>
+                </div>
+            )}
+
+            {/* STEP 4: QR */}
+            {step === 'qr' && qrData && (
+                <div className="animate-fade-in text-center">
+                    <p className="text-sm text-gray-600 mb-4 font-sans">Escanea este código desde tu aplicación bancaria:</p>
+                    
+                    <div className="flex justify-center mb-6">
+                        <NextImage
+                            src={qrData.qr_image.startsWith('data:') ? qrData.qr_image : `data:image/png;base64,${qrData.qr_image}`}
+                            alt="QR de Pago"
+                            width={240}
+                            height={240}
+                            className="border-8 border-white shadow-2xl rounded-xl"
+                            style={{ maxWidth: '100%', height: 'auto' }}
+                        />
+                    </div>
+
+                    <div className="flex justify-center items-center gap-3 mb-6 bg-gray-50 p-3 rounded-lg">
+                        <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-rosa-principal"></div>
+                        <span className="text-sm font-bold text-gray-600">Esperando confirmación de pago...</span>
+                    </div>
+
+                    {qrData.mock && (
+                        <div className="mb-4">
+                            <button
+                                onClick={handleSimulatePayment}
+                                disabled={simulating}
+                                className={`text-xs px-4 py-2 rounded-full font-mono transition ${simulating ? 'bg-gray-300' : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'}`}
+                            >
+                                {simulating ? 'Simulando...' : '⚡ DEV: Simular Pago Exitoso'}
+                            </button>
+                        </div>
+                    )}
+                    
+                    <button 
+                        onClick={() => {
+                            setStep('amount');
+                            setQrData(null);
+                        }}
+                        className="text-sm text-red-500 hover:text-red-700 underline"
+                    >
+                        Cancelar y volver
+                    </button>
                 </div>
             )}
         </div>

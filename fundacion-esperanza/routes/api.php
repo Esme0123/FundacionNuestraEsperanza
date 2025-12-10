@@ -37,6 +37,7 @@ Route::prefix('auth')->group(function () {
 
         // Donor Panel Routes
         Route::get('donations/my', [DonationController::class, 'myDonations']);
+        Route::post('update-profile', [AuthController::class, 'updateProfile']);
     });
 });
 
@@ -152,3 +153,10 @@ Route::prefix('public')->group(function () {
     Route::post('request-qr', [\App\Http\Controllers\PublicDonationController::class, 'requestQr']);
     Route::get('check-status/{qrId}', [\App\Http\Controllers\PublicDonationController::class, 'checkStatus']);
 });
+
+/*
+|--------------------------------------------------------------------------
+| Webhooks
+|--------------------------------------------------------------------------
+*/
+Route::post('webhooks/bnb', [\App\Http\Controllers\BnbWebhookController::class, 'handle']);

@@ -27,12 +27,35 @@ class CertificadoService
         }
 
         // 3. Preparar datos
+        // 3. Preparar datos
         $certificadoUuid = Str::uuid()->toString();
+        
+        // --- 3a. Prepare Background Image ---
+        $bgPath = resource_path('views/pdf/fondoCertificado.png');
+        $bgBase64 = '';
+        if (File::exists($bgPath)) {
+            $bgData = File::get($bgPath);
+            $bgBase64 = 'data:image/png;base64,' . base64_encode($bgData);
+        }
+
+        // --- 3b. Format Date (es) ---
+        // Ensure locale is Spanish for this operation
+        $date = $donation->date instanceof \Carbon\Carbon ? $donation->date : \Carbon\Carbon::parse($donation->date);
+        $date->locale('es');
+        $fechaTexto = $date->isoFormat('D [de] MMMM [de] YYYY'); // e.g. 19 de septiembre de 2025
+
+        // --- 3c. Amount in Words ---
+        $amount = $donation->amount;
+        $formatter = new \NumberFormatter("es", \NumberFormatter::SPELLOUT);
+        $amountInWords = strtoupper($formatter->format($amount));
+        
         $data = [
-            'donante_nombre' => $donation->donor->full_name,
-            'donacion_monto' => $donation->formatted_amount,
-            'donacion_fecha' => $donation->date->format('d/m/Y'),
+            'donante_nombre' => $donation->qr->donor_name ?? $donation->donor->full_name ?? 'Donante Anónimo',
+            'donacion_monto' => number_format($donation->amount, 2),
+            'donacion_monto_letras' => $amountInWords,
+            'donacion_fecha_texto' => $fechaTexto,
             'certificado_uuid' => $certificadoUuid,
+            'fondo_imagen' => $bgBase64,
         ];
         $filename = 'certificados/donacion-' . $certificadoUuid . '.pdf';
         $absolutePath = Storage::disk('public')->path($filename);
